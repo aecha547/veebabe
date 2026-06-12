@@ -3,904 +3,2137 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dossier Pisces Noir — Édition Journal</title>
+<title>Dossier Pisces Noir — Bureau des Archives</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap');
+:root{
+  --paper:#f5ecd6;         /* Papier journal vieilli de qualité */
+  --paper-dark:#dfd7be;    /* Ombre papier */
+  --paper-text:#1c1c1c;    /* Encre d'imprimerie noire */
+  --ink:#e4ded0;           /* Texte clair thématique sombre */
+  --muted:#a39d90;         /* Éléments secondaires atténués */
+  --deep:#060606;          /* Fond sombre général */
+  --black:#000;
+  --soft:#121212;
+  --line:rgba(228,222,208,0.14);
+  --line-dark:rgba(28,28,28,0.18);
+  --gold:#dfc075;          /* Teinte dorée rétro */
+  --shadow:0 30px 70px rgba(0,0,0,.85);
+  --max:1280px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 5%,rgba(255,255,255,.06),transparent 22rem),
+    radial-gradient(circle at 85% 15%,rgba(255,255,255,.03),transparent 28rem),
+    linear-gradient(115deg,#000 0%,#0c0c0c 45%,#050505 100%);
+  color:var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  transition: box-shadow 0.5s ease-in-out;
+}
+body:before{
+  content:"";
+  position:fixed; inset:0;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.01) 0 1px, transparent 1px 7px);
+  mix-blend-mode:overlay;
+  opacity:.25;
+  pointer-events:none;
+  z-index:90;
+}
+body:after{
+  content:"";
+  position:fixed; inset:-10%;
+  background:
+    radial-gradient(circle, transparent 45%, rgba(0,0,0,.82) 85%),
+    linear-gradient(100deg, transparent 0 17%, rgba(255,255,255,.04) 18%, transparent 20% 44%, rgba(255,255,255,.02) 46%, transparent 49%),
+    repeating-linear-gradient(0deg,transparent 0 82px,rgba(0,0,0,.3) 83px 98px);
+  pointer-events:none;
+  z-index:80;
+  transition: opacity 1s ease-in-out;
+}
 
-  :root {
-    /* Vintage Newspaper Palette */
-    --paper: #f4f1ea;
-    --paper-dark: #e6dfcc;
-    --ink: #1a1a1a;
-    --ink-light: #3a3a3a;
-    --accent: #8b0000; /* Confidential Red Stamp */
-    --desk: #050505;
-    
-    /* Typography */
-    --font-serif: 'Playfair Display', Georgia, "Times New Roman", serif;
-    --font-mono: "Courier New", Courier, monospace;
-    
-    --shadow: 0 25px 65px rgba(0,0,0,0.85);
-  }
+/* Lueur chaleureuse de bougie pour la lettre finale */
+@keyframes candleFlicker {
+  0% { box-shadow: inset 0 0 70px rgba(223, 192, 117, 0.12); }
+  33% { box-shadow: inset 0 0 100px rgba(223, 192, 117, 0.25); }
+  66% { box-shadow: inset 0 0 85px rgba(223, 192, 117, 0.18); }
+  100% { box-shadow: inset 0 0 70px rgba(223, 192, 117, 0.12); }
+}
+body.candle-mode::after {
+  animation: candleFlicker 2.8s infinite ease-in-out;
+  box-shadow: inset 0 0 90px rgba(223, 192, 117, 0.22);
+  pointer-events: none;
+}
 
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  
-  body {
-    margin: 0;
-    background: var(--desk);
-    color: var(--ink);
-    font-family: var(--font-serif);
-    min-height: 100vh;
-    overflow-x: hidden;
-    padding: clamp(1rem, 3vw, 3rem);
-  }
+button{font:inherit; background:none; border:none; outline:none; padding:0}
+a{color:inherit}
 
-  /* Rain Background Effect */
-  #rain {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.6;
-  }
+#rain,#webCanvas,#memoryCanvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+#rain{z-index:1}
+#webCanvas{z-index:2; opacity:.3}
+#memoryCanvas{z-index:3}
 
-  /* --- START SCREEN --- */
-  .start-screen {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    display: grid;
-    place-items: center;
-    background: radial-gradient(circle at center, rgba(20,20,20,0.9), #000);
-    padding: 1.5rem;
-  }
-  .start-card {
-    background: var(--paper);
-    padding: 3rem;
-    max-width: 600px;
-    text-align: center;
-    border: 8px double var(--ink);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-  }
-  .start-card h1 {
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    text-transform: uppercase;
-    font-weight: 900;
-    margin: 0 0 1rem;
-    line-height: 0.9;
-  }
-  .start-card p {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    margin-bottom: 2rem;
-  }
+/* Fenêtre d'ouverture */
+.start-screen{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at center,rgba(255,255,255,.06),transparent 25rem),
+    linear-gradient(135deg,#080808,#000);
+  padding:1.5rem;
+}
+.start-card{
+  width:min(660px,100%);
+  border:4px double rgba(255,255,255,.18);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),transparent),
+    #090909;
+  box-shadow:var(--shadow);
+  padding:clamp(1.8rem,5vw,3.5rem);
+  position:relative;
+  text-align:center;
+}
+.case-tag{
+  display:inline-flex;
+  border:1px solid rgba(255,255,255,.25);
+  padding:.3rem .8rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-family:"Courier New", monospace;
+  font-size:.72rem;
+  color:var(--gold);
+  margin-bottom:1.5rem;
+}
+.start-card h1{
+  font-size:clamp(2.4rem,7vw,4.2rem);
+  line-height:.95;
+  letter-spacing:-.03em;
+  margin:0 0 1.5rem;
+  text-transform:uppercase;
+  font-weight:900;
+  font-family: Georgia, serif;
+}
+.start-card p{
+  max-width:52ch;
+  line-height:1.75;
+  color:#ccc;
+  margin:0 auto 2rem;
+  font-size:1.02rem;
+}
 
-  /* --- NEWSPAPER LAYOUT --- */
-  .newspaper-wrapper {
-    position: relative;
-    z-index: 10;
-    max-width: 1300px;
-    margin: 0 auto;
-    background: var(--paper);
-    box-shadow: var(--shadow);
-    padding: clamp(1rem, 3vw, 2.5rem);
-  }
-  /* Paper Texture Overlay */
-  .newspaper-wrapper::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 50;
-  }
+/* Boutons & Éléments Typographiques */
+.primary-btn,.ghost-btn,.station,.paper-btn,.chip,.dial-btn{
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.25);
+  background:#111;
+  color:#f2f2f2;
+  padding:.8rem 1.2rem;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  font-family:"Courier New", monospace;
+  font-size:.75rem;
+  font-weight:bold;
+  transition:all .2s cubic-bezier(.165,.84,.44,1);
+}
+.primary-btn:hover,.ghost-btn:hover,.station:hover,.chip:hover,.dial-btn:hover{
+  transform:translateY(-2px);
+  background:#f2f2f2;
+  color:#070707;
+  box-shadow:0 6px 15px rgba(0,0,0,.5);
+}
+.ghost-btn{background:transparent; border-color:rgba(255,255,255,.18)}
+.paper-btn{
+  color:var(--paper-text);
+  background:transparent;
+  border:1px solid var(--paper-text);
+}
+.paper-btn:hover{
+  background:var(--paper-text);
+  color:var(--paper);
+  transform:translateY(-2px);
+}
 
-  /* Masthead */
-  .masthead {
-    text-align: center;
-    border-bottom: 6px double var(--ink);
-    padding-bottom: 1.5rem;
-    margin-bottom: 2rem;
-  }
+/* Structure Générale */
+.site{
+  position:relative;
+  z-index:5;
+  padding:clamp(1rem,3vw,3rem) clamp(.8rem,2vw,2rem);
+}
+.layout{
+  width:min(var(--max),100%);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:320px minmax(0,1fr);
+  gap:clamp(1.5rem,4vw,3rem);
+}
+@media(max-width:980px){
+  .layout{grid-template-columns:1fr}
+  .left-panel{position:static!important}
+}
+.left-panel{
+  position:sticky;
+  top:2rem;
+  align-self:start;
+  display:grid;
+  gap:1.5rem;
+}
+.panel{
+  border:1px solid rgba(255,255,255,.1);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.03),transparent),
+    rgba(10,10,10,.96);
+  box-shadow:0 15px 45px rgba(0,0,0,.5);
+  backdrop-filter: blur(10px);
+}
+.panel-pad{padding:1.4rem}
+.panel h2,.panel h3{
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.2em;
+  font-size:.85rem;
+  margin:0 0 1.2rem;
+  color:#fff;
+  border-bottom:1px solid var(--line);
+  padding-bottom:.5rem;
+}
+
+/* Liste de Progression */
+.mini-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.8rem 0;
+  border-top:1px dashed var(--line);
+  font-family:"Courier New", monospace;
+  font-size:.8rem;
+  color:#b8b8b8;
+}
+.mini-row:first-of-type{border-top:0}
+.stamp{
+  border:2px solid rgba(255,255,255,.18);
+  color:#666;
+  padding:.15rem .4rem;
+  font-weight:bold;
+  transform:rotate(-2deg);
+  display:inline-block;
+  white-space:nowrap;
+  transition:all .3s ease;
+  font-size:.65rem;
+}
+.mini-row.done .stamp{
+  color:var(--gold);
+  border-color:var(--gold);
+  opacity:1;
+  transform:rotate(-4deg) scale(1.05);
+}
+
+/* Pupitre de Radio */
+.radio{
+  padding:1.2rem;
+}
+.radio-face{
+  border:1px solid rgba(255,255,255,.12);
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.02) 0 3px,transparent 3px 9px),
+    linear-gradient(180deg,#141414,#040404);
+  padding:.85rem;
+  margin-bottom:1rem;
+}
+.radio-screen{
+  border:1px solid rgba(255,255,255,.2);
+  background:#020202;
+  padding:.85rem;
+  position:relative;
+  overflow:hidden;
+}
+.freq{
+  font-family:"Courier New", monospace;
+  font-size:1.6rem;
+  letter-spacing:.05em;
+  color:var(--gold);
+  font-weight:bold;
+}
+.station-name{
+  font-family:"Courier New", monospace;
+  color:#9a9a9a;
+  font-size:.72rem;
+  margin-top:.4rem;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  line-height:1.4;
+}
+.scope-wrap{
+  position:relative;
+  height:76px;
+  border:1px solid rgba(255,255,255,.1);
+  background:linear-gradient(180deg,#000,#080808);
+  overflow:hidden;
+  margin:1rem 0;
+}
+.scope-wrap canvas{position:absolute; inset:0; width:100%; height:100%}
+.stations{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.5rem;
+}
+.station{
+  padding:.7rem .3rem;
+  font-size:.7rem;
+  background:#090909;
+  border-color:rgba(255,255,255,.12);
+  text-align:center;
+}
+.station.active{
+  background:#f2f2f2;
+  color:#000;
+  border-color:#f2f2f2;
+}
+.station.locked{
+  opacity:.32;
+  cursor:not-allowed;
+}
+.now-playing{
+  margin-top:1rem;
+  color:#969696;
+  font-family:"Courier New", monospace;
+  font-size:.75rem;
+  line-height:1.5;
+}
+.volume-line{
+  margin-top:1rem;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:.8rem;
+  align-items:center;
+  color:#aaa;
+  font-family:"Courier New", monospace;
+  font-size:.75rem;
+}
+
+/* Curseur Custom */
+input[type="range"]{
+  -webkit-appearance:none;
+  width:100%;
+  background:rgba(255,255,255,.12);
+  height:4px;
+  border-radius:2px;
+  outline:none;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--gold);
+  border:1px solid #000;
+  cursor:pointer;
+  transition:transform .1s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover{
+  transform:scale(1.25);
+}
+
+.progress-bar{
+  margin-top:1rem;
+  height:4px;
+  background:#020202;
+  border:1px solid rgba(255,255,255,.1);
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#f2f2f2;
+  transition:width .15s linear;
+}
+.timecode{
+  display:flex;
+  justify-content:space-between;
+  color:#757575;
+  font-family:"Courier New", monospace;
+  font-size:.7rem;
+  margin-top:.4rem;
+}
+.radio-mini-actions{
+  margin-top:1rem;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.5rem;
+}
+.radio-mini-actions .ghost-btn{
+  padding:.6rem .4rem;
+  font-size:.65rem;
+}
+
+/* En-tête de style journal ancien */
+.newspaper-masthead{
+  border-top:4px solid var(--ink);
+  border-bottom:4px solid var(--ink);
+  padding:1rem 0;
+  margin-bottom:2.5rem;
+  text-align:center;
+}
+.masthead-top{
+  display:flex;
+  justify-content:space-between;
+  font-family:"Courier New", monospace;
+  font-size:.78rem;
+  letter-spacing:.12em;
+  border-bottom:1px solid var(--line);
+  padding-bottom:.5rem;
+  margin-bottom:.8rem;
+  color:var(--muted);
+}
+.masthead-title{
+  font-family: Georgia, "Times New Roman", serif;
+  font-size:clamp(2.2rem,6vw,4.5rem);
+  font-weight:900;
+  letter-spacing:-.04em;
+  text-transform:uppercase;
+  margin:.4rem 0;
+  line-height:.85;
+}
+.masthead-bottom{
+  display:flex;
+  justify-content:space-between;
+  font-family:"Courier New", monospace;
+  font-size:.75rem;
+  border-top:1px solid var(--line);
+  padding-top:.5rem;
+  margin-top:.8rem;
+  color:var(--muted);
+}
+@media (max-width: 600px) {
   .masthead-top, .masthead-bottom {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-  .masthead-bottom {
-    border-bottom: none;
-    border-top: 1px solid var(--ink);
-    padding-bottom: 0;
-    padding-top: 0.5rem;
-    margin-top: 0.5rem;
-  }
-  .masthead h1 {
-    font-size: clamp(3rem, 8vw, 6.5rem);
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
-    margin: 0.5rem 0;
-    line-height: 0.85;
-  }
-
-  /* Grid Layout */
-  .layout {
-    display: grid;
-    grid-template-columns: minmax(280px, 1fr) 3fr;
-    gap: 2.5rem;
-  }
-  @media (max-width: 980px) {
-    .layout { grid-template-columns: 1fr; }
-  }
-
-  /* Left Column (Editorial / Radio) */
-  .sidebar {
-    border-right: 2px solid var(--ink);
-    padding-right: 2.5rem;
-    display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: .4rem;
+    align-items: center;
   }
-  @media (max-width: 980px) {
-    .sidebar {
-      border-right: none;
-      border-bottom: 4px double var(--ink);
-      padding-right: 0;
-      padding-bottom: 2rem;
-    }
-  }
-  
-  .widget {
-    border: 2px solid var(--ink);
-    padding: 1.2rem;
-    background: var(--paper-dark);
-  }
-  .widget-title {
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    font-weight: bold;
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 0.5rem;
-    margin: 0 0 1rem;
-  }
-  
-  /* Status Checklist */
-  .status-row {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    padding: 0.6rem 0;
-    border-bottom: 1px dashed var(--ink-light);
-  }
-  .status-row:last-child { border-bottom: none; }
-  .stamp {
-    border: 2px solid var(--ink);
-    padding: 0.1rem 0.4rem;
-    font-weight: bold;
-    transform: rotate(-3deg);
-  }
-  .status-row.done .stamp {
-    color: var(--accent);
-    border-color: var(--accent);
-    transform: rotate(-5deg) scale(1.1);
-  }
+}
 
-  /* Radio Widget */
-  .radio-screen {
-    background: #111;
-    color: #f4f1ea;
-    padding: 1rem;
-    text-align: center;
-    font-family: var(--font-mono);
-    margin-bottom: 1rem;
-    border: inset 3px #555;
-  }
-  .radio-freq { font-size: 1.5rem; font-weight: bold; }
-  .radio-name { font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.8; }
-  
-  .stations-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-  button {
-    cursor: pointer;
-    background: transparent;
-    border: 1px solid var(--ink);
-    color: var(--ink);
-    font-family: var(--font-mono);
-    font-weight: bold;
-    padding: 0.6rem;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    transition: 0.2s ease;
-  }
-  button:hover:not(:disabled) {
-    background: var(--ink);
-    color: var(--paper);
-  }
-  .station-btn.active {
-    background: var(--ink);
-    color: var(--paper);
-  }
-  .station-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+/* En-têtes de Sections */
+.section-head{
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+  margin-bottom:2rem;
+  border-bottom:4px double var(--line);
+  padding-bottom:1rem;
+}
+.section-head h2{
+  font-family: Georgia, serif;
+  font-size:clamp(1.6rem,4vw,2.8rem);
+  text-transform:uppercase;
+  font-weight:900;
+  margin:0;
+  letter-spacing:-.03em;
+}
+.section-head p{
+  font-family:"Courier New", Courier, monospace;
+  font-size:.82rem;
+  color:var(--muted);
+  margin:0;
+  line-height:1.5;
+}
 
-  /* Global Typographical Elements */
-  h2.headline {
-    font-size: clamp(2.2rem, 5vw, 3.8rem);
-    text-transform: uppercase;
-    line-height: 0.9;
-    font-weight: 900;
-    margin: 0 0 1rem;
-  }
-  .kicker {
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 0.1em;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
+/* Zone d'introduction (Hero) */
+.hero{
+  min-height:70vh;
+  display:grid;
+  align-items:center;
+  padding-bottom:3rem;
+}
+.hero-inner{
+  border:1px solid rgba(255,255,255,.1);
+  background:
+    linear-gradient(125deg,rgba(255,255,255,.04),transparent),
+    rgba(8,8,8,.65);
+  padding:clamp(1.5rem,4vw,3.5rem);
+  position:relative;
+  box-shadow:var(--shadow);
+}
+.hero-grid{
+  position:relative;
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:clamp(1.5rem,4vw,3rem);
+  align-items:center;
+}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.kicker{
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.25em;
+  color:var(--gold);
+  font-size:.8rem;
+  margin-bottom:1.2rem;
+}
+.hero h1{
+  font-size:clamp(3rem,8vw,6rem);
+  line-height:.85;
+  text-transform:uppercase;
+  letter-spacing:-.06em;
+  margin:0 0 1.5rem;
+}
+.hero h1 span{
+  display:block;
+  -webkit-text-stroke:1px rgba(255,255,255,.8);
+  color:transparent;
+}
+.hero-copy{
+  max-width:58ch;
+  font-size:1.1rem;
+  color:#dbdbdb;
+  line-height:1.75;
+  margin:0 0 2rem;
+}
+.hero-actions{display:flex; flex-wrap:wrap; gap:.8rem}
 
+/* Fiche d'enregistrement (Rapport droit) */
+.case-card{
+  background:var(--paper);
+  color:var(--paper-text);
+  padding:1.4rem;
+  transform:rotate(1.5deg);
+  box-shadow:0 25px 55px rgba(0,0,0,.8);
+  border:1px solid var(--paper-dark);
+}
+.case-card:before{
+  content:"CONFIDENTIEL";
+  position:absolute;
+  top:1.2rem;
+  right:.8rem;
+  border:3px solid rgba(0,0,0,.22);
+  color:rgba(0,0,0,.25);
+  padding:.3rem .6rem;
+  font-family:"Courier New", monospace;
+  font-weight:900;
+  transform:rotate(8deg);
+  font-size:.82rem;
+}
+.case-card h2{
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  font-size:1.05rem;
+  margin:0 0 1.2rem;
+  letter-spacing:.08em;
+  border-bottom:1px solid rgba(0,0,0,.15);
+  padding-bottom:.4rem;
+}
+.case-meta{
+  display:grid;
+  gap:.5rem;
+  font-family:"Courier New", monospace;
+  font-size:.82rem;
+  line-height:1.5;
+}
+.file-line{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px dashed rgba(0,0,0,.18);
+  gap:1rem;
+}
+
+/* Tableau d'Indices (Board) */
+.board{
+  position:relative;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(8,8,8,.75);
+  padding:clamp(1.2rem,3vw,2.5rem);
+  box-shadow:var(--shadow);
+}
+.thread-area{
+  position:relative;
+  min-height:560px;
+}
+.thread-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  opacity:.3;
+}
+.thread-svg line{
+  stroke:#fff;
+  stroke-width:1;
+  stroke-dasharray:5 5;
+}
+.polaroids{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(1rem,2vw,1.8rem);
+  padding-top:1.5rem;
+}
+@media(max-width:900px){
+  .thread-area{min-height:auto}
+  .polaroids{grid-template-columns:1fr}
+  .thread-svg{display:none}
+}
+.photo-card{
+  border:0;
+  background:transparent;
+  padding:0;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.6));
+  width:100%;
+}
+.photo-card:nth-child(1){transform:rotate(-3deg); margin-top:2rem}
+.photo-card:nth-child(2){transform:rotate(1.5deg); margin-top:.2rem}
+.photo-card:nth-child(3){transform:rotate(-1.5deg); margin-top:3.2rem}
+@media(max-width:900px){.photo-card{transform:none!important;margin-top:0!important}}
+
+.photo-paper{
+  background:var(--paper);
+  padding:.85rem .85rem 2.4rem;
+  position:relative;
+  transition:.3s ease;
+  border:1px solid var(--paper-dark);
+}
+.photo-card:hover .photo-paper{
+  transform:translateY(-6px) rotate(.5deg);
+  box-shadow:0 25px 45px rgba(0,0,0,.7);
+}
+.photo-paper:before{
+  content:"";
+  position:absolute;
+  background:rgba(225,225,225,.25);
+  width:80px;
+  height:24px;
+  transform:rotate(-12deg);
+  top:-10px;
+  left:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,.15);
+}
+.photo-paper img{
+  width:100%;
+  aspect-ratio:1/1.2;
+  object-fit:cover;
+  display:block;
+  filter:grayscale(100%) contrast(1.2) brightness(.9);
+  border:1px solid rgba(0,0,0,.2);
+}
+.caption{
+  position:absolute;
+  left:.85rem;
+  right:.85rem;
+  bottom:.7rem;
+  color:var(--paper-text);
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  font-family:"Courier New", monospace;
+  font-size:.78rem;
+  text-transform:uppercase;
+  font-weight:bold;
+}
+.pin{
+  position:absolute;
+  top:.3rem;
+  left:50%;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#222;
+  border:2px solid #ddd;
+  box-shadow:0 1px 4px rgba(0,0,0,.5);
+}
+.photo-note{
+  margin-top:.8rem;
+  color:#bcbcbc;
+  font-family:"Courier New", monospace;
+  font-size:.75rem;
+  line-height:1.5;
+  background:rgba(0,0,0,.45);
+  padding:.8rem;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.timeline{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1rem;
+  margin-top:2rem;
+}
+@media(max-width:780px){.timeline{grid-template-columns:1fr}}
+.clue{
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(0,0,0,.25);
+  padding:1.1rem;
+}
+.clue strong{
+  display:block;
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  font-size:.75rem;
+  margin-bottom:.5rem;
+  color:var(--gold);
+}
+.clue p{margin:0;color:#b0b0b0;line-height:1.55;font-size:.9rem}
+
+/* Section Bobine Mémoire */
+.reel{
+  border:1px solid rgba(255,255,255,.12);
+  background:#050505;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+  padding:clamp(1.5rem,4vw,3rem);
+}
+.reel:before, .reel:after{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  height:18px;
+  background:repeating-linear-gradient(90deg,#000 0 12px, transparent 12px 24px);
+  opacity:.7;
+  z-index:5;
+}
+.reel:before{top:8px}
+.reel:after{bottom:8px}
+
+.reel-inner{
+  margin:1.8rem 0;
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:2.5rem;
+  align-items:center;
+}
+@media(max-width:900px){.reel-inner{grid-template-columns:1fr}}
+.reel-title{
+  font-size:clamp(1.8rem,5vw,4.2rem);
+  line-height:.9;
+  text-transform:uppercase;
+  letter-spacing:-.04em;
+  margin:0 0 1.2rem;
+}
+.reel-text{
+  color:#cccccc;
+  line-height:1.75;
+  font-size:1rem;
+  margin-bottom:1.5rem;
+}
+
+/* Machine Typographique (Mot Clé) */
+.word-machine{
+  min-height:360px;
+  border:4px double rgba(255,255,255,0.18);
+  background:#080808;
+  position:relative;
+  overflow:hidden;
+  box-shadow:inset 0 0 25px rgba(0,0,0,.95);
+}
+.word-machine .word{
+  position:absolute;
+  font-family:Georgia,serif;
+  font-style:italic;
+  color:rgba(255,255,255,.7);
+  text-shadow:0 0 10px rgba(255,255,255,.15);
+  white-space:nowrap;
+  animation:floatword linear forwards;
+}
+@keyframes floatword{
+  from{transform:translateY(115%) scale(.95); opacity:0}
+  15%{opacity:.85}
+  75%{opacity:.45}
+  to{transform:translateY(-120%) scale(1.05); opacity:0}
+}
+
+/* Coffret-Fort à Disques */
+.puzzle-box{
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(8,8,8,.8);
+  box-shadow:var(--shadow);
+  padding:clamp(1.2rem,3vw,2.5rem);
+  display:grid;
+  grid-template-columns:.8fr 1.2fr;
+  gap:2rem;
+  align-items:start;
+}
+@media(max-width:900px){.puzzle-box{grid-template-columns:1fr}}
+
+.puzzle-paper{
+  background:var(--paper);
+  color:var(--paper-text);
+  padding:1.4rem;
+  min-height:330px;
+  box-shadow:0 15px 35px rgba(0,0,0,.5);
+  transform:rotate(-.5deg);
+  position:relative;
+  border:1px solid var(--paper-dark);
+}
+.puzzle-paper:before{
+  content:"PISTE";
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  color:rgba(0,0,0,.15);
+  border:3px solid rgba(0,0,0,.12);
+  font-family:"Courier New", monospace;
+  padding:.2rem .5rem;
+  transform:rotate(8deg);
+  font-weight:900;
+  font-size:.78rem;
+}
+.puzzle-paper h3{
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:1rem;
+  margin:0 0 1rem;
+  border-bottom:1px solid rgba(0,0,0,.15);
+  padding-bottom:.4rem;
+}
+.puzzle-paper p{
+  line-height:1.65;
+  margin:.8rem 0;
+  font-size:.92rem;
+}
+
+/* Dispositif Mécanique du Coffre */
+.safe{
+  border:1px solid rgba(255,255,255,.12);
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 7px),
+    #0a0a0a;
+  padding:1.4rem;
+}
+.safe h3{
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:.85rem;
+  margin:0 0 1.2rem;
+}
+.sequence-window{
+  min-height:60px;
+  border:1px solid rgba(255,255,255,.2);
+  background:#020202;
+  padding:.9rem;
+  color:#d6d6d6;
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  flex-wrap:wrap;
+}
+.sequence-window span{
+  border:1px solid rgba(255,255,255,.25);
+  padding:.3rem .6rem;
+  background:#141414;
+}
+.chips{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.5rem;
+  margin:1.2rem 0;
+}
+@media(max-width:560px){.chips{grid-template-columns:1fr 1fr}}
+
+.chip{
+  background:#1a1a1a;
+  border:1px solid #3c3c3c;
+  padding:.8rem .3rem;
+  font-size:.72rem;
+  font-weight:bold;
+  text-align:center;
+  box-shadow:inset 0 0 6px rgba(255,255,255,.05), 1px 3px 5px rgba(0,0,0,0.5);
+}
+.puzzle-actions{
+  display:flex;
+  gap:.6rem;
+  flex-wrap:wrap;
+}
+.dials{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.5rem;
+  margin-top:1.2rem;
+}
+.dial{
+  border:1px solid rgba(255,255,255,.1);
+  background:#080808;
+  padding:.8rem .4rem;
+  text-align:center;
+}
+.dial strong{
+  display:block;
+  font-family:"Courier New", monospace;
+  margin-bottom:.4rem;
+  font-size:.75rem;
+}
+.dial .dial-value{
+  font-size:1.2rem;
+  font-family:"Courier New", monospace;
+  color:var(--gold);
+}
+.dial-btn{
+  margin-top:.6rem;
+  padding:.5rem;
+  width:100%;
+  font-size:.65rem;
+}
+.puzzle-msg{
+  color:#bdbdbd;
+  line-height:1.55;
+  font-family:"Courier New", monospace;
+  font-size:.75rem;
+  margin-top:1rem;
+}
+
+/* Compartiment Secret & Lettre Finale */
+.secret{
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(8,8,8,.7);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.secret.locked .secret-body{display:none}
+
+.lock-cover{
+  padding:clamp(2rem,5vw,4.5rem);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  min-height:360px;
+  background:
+    radial-gradient(circle at 50% 70%,rgba(223, 192, 117, 0.05),transparent 20rem),
+    linear-gradient(180deg,rgba(255,255,255,.03),transparent);
+}
+.secret:not(.locked) .lock-cover{display:none}
+
+.lock-icon{
+  font-size:2.8rem;
+  margin-bottom:1rem;
+  animation:lockpulse 2.2s infinite ease-in-out;
+}
+@keyframes lockpulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.06)}
+  100%{transform:scale(1)}
+}
+
+.lock-cover h2{
+  font-size:clamp(1.8rem,5vw,3.6rem);
+  margin:0 0 1.2rem;
+  text-transform:uppercase;
+  letter-spacing:-.04em;
+}
+.lock-cover p{
+  color:#ccc;
+  line-height:1.75;
+  max-width:52ch;
+  margin:0 auto 1.5rem;
+  font-size:.95rem;
+}
+.lock-status{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(170px,1fr));
+  gap:.8rem;
+  margin-top:1.5rem;
+  max-width:520px;
+}
+@media(max-width:560px){.lock-status{grid-template-columns:1fr}}
+.lock-status div{
+  border:1px solid rgba(255,255,255,.12);
+  background:#0c0c0c;
+  padding:.8rem;
+  font-family:"Courier New", monospace;
+  font-size:.75rem;
+  color:#9a9a9a;
+  text-transform:uppercase;
+}
+
+.secret-body{
+  padding:clamp(1.5rem,4vw,3.5rem);
+}
+.letter-wrap{
+  display:grid;
+  grid-template-columns:.6fr 1.4fr;
+  gap:2.5rem;
+}
+@media(max-width:980px){.letter-wrap{grid-template-columns:1fr}}
+
+.big-moon{
+  min-height:460px;
+  border:1px solid rgba(255,255,255,.1);
+  background:
+    radial-gradient(circle at 50% 35%,rgba(255,255,255,.88) 0 9%,rgba(255,255,255,.25) 10% 16%,rgba(255,255,255,.06) 18% 25%,transparent 26%),
+    linear-gradient(180deg,#111,#030303);
+  position:relative;
+  overflow:hidden;
+}
+.big-moon:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(110deg,transparent 0 18px,rgba(255,255,255,.02) 19px 20px),
+    radial-gradient(circle at 55% 45%,transparent 0 9%,rgba(0,0,0,.55) 9.5% 12%,transparent 12.5%);
+}
+.big-moon:after{
+  content:"97.7 MHz";
+  position:absolute;
+  bottom:1.2rem;
+  left:1.2rem;
+  font-family:"Courier New", monospace;
+  letter-spacing:.2em;
+  color:var(--gold);
+  font-size:.75rem;
+}
+
+/* Document Papier (Lettre Finale) */
+.final-letter{
+  background:var(--paper);
+  color:var(--paper-text);
+  padding:clamp(1.5rem,4vw,3rem);
+  box-shadow:0 30px 65px rgba(0,0,0,.75);
+  position:relative;
+  transform:rotate(-.2deg);
+  border:1px solid var(--paper-dark);
+}
+.final-letter:before{
+  content:"ARCHIVES SECRÈTES";
+  position:absolute;
+  top:1.2rem;
+  right:1.2rem;
+  color:rgba(0,0,0,.15);
+  border:3px solid rgba(0,0,0,.12);
+  font-family:"Courier New", monospace;
+  padding:.3rem .6rem;
+  transform:rotate(6deg);
+  font-weight:900;
+  font-size:.78rem;
+}
+.final-letter h2{
+  margin:0 0 1.8rem;
+  font-size:clamp(1.8rem,5vw,3rem);
+  line-height:.95;
+  letter-spacing:-.04em;
+  text-transform:uppercase;
+  max-width:14ch;
+}
+
+/* Double colonnes imprimées */
+.newspaper-cols{
+  column-count:2;
+  column-gap:2.2rem;
+  column-rule:1px dashed rgba(0,0,0,.15);
+  text-align:justify;
+  text-justify:inter-word;
+}
+@media (max-width: 768px) {
   .newspaper-cols {
-    column-count: 2;
-    column-gap: 2rem;
-    column-rule: 1px solid var(--ink);
-    text-align: justify;
-    line-height: 1.7;
-    font-size: 1.05rem;
+    column-count: 1;
+    column-gap: 0;
+    column-rule: none;
   }
-  @media (max-width: 760px) {
-    .newspaper-cols { column-count: 1; }
-  }
-  .newspaper-cols p { margin-top: 0; margin-bottom: 1.2rem; }
-  
-  .drop-cap::first-letter {
-    font-size: 4.2rem;
-    float: left;
-    line-height: 0.8;
-    margin-right: 0.6rem;
-    font-weight: 900;
-    color: var(--ink);
-  }
+}
 
-  /* Section Dividers */
-  .section {
-    padding: 2.5rem 0;
-    border-bottom: 4px solid var(--ink);
-  }
-  .section:last-child { border-bottom: none; }
+.newspaper-cols p{
+  font-size:1rem;
+  line-height:1.75;
+  margin:0 0 1.2rem;
+  text-indent:1rem;
+}
+.newspaper-cols p:first-of-type, .drop-cap {
+  text-indent:0;
+}
 
-  /* Evidence Photos */
-  .photo-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-top: 2rem;
-  }
-  @media(max-width: 760px) {
-    .photo-grid { grid-template-columns: 1fr; }
-  }
-  .photo-card {
-    background: var(--paper);
-    border: 2px solid var(--ink);
-    padding: 0.8rem 0.8rem 2rem;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.2s ease;
-    box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
-  }
-  .photo-card:hover {
-    transform: translateY(-5px);
-  }
-  .photo-card img {
-    width: 100%;
-    aspect-ratio: 4/5;
-    object-fit: cover;
-    filter: grayscale(100%) contrast(1.2);
-    border: 1px solid var(--ink);
-  }
-  .photo-caption {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 0.8rem;
-    text-transform: uppercase;
-  }
+/* Lettrine stylisée */
+.drop-cap::first-letter {
+  font-size:3.5rem;
+  font-weight:900;
+  float:left;
+  line-height:.8;
+  margin-top:4px;
+  margin-right:8px;
+  color:var(--paper-text);
+  font-family: Georgia, serif;
+  text-transform:uppercase;
+}
 
-  /* The Cipher Puzzle */
-  .cipher-console {
-    background: var(--paper-dark);
-    border: 4px double var(--ink);
-    padding: 2rem;
-    margin-top: 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-  @media(max-width: 760px) {
-    .cipher-console { grid-template-columns: 1fr; }
-  }
-  .cipher-display {
-    background: #111;
-    color: #0f0;
-    font-family: var(--font-mono);
-    padding: 1.5rem;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    border: inset 4px #444;
-    letter-spacing: 0.1em;
-  }
-  .cipher-keyboard {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.8rem;
-  }
-  .key-btn {
-    border-radius: 50%;
-    aspect-ratio: 1;
-    font-size: 0.75rem;
-    border: 2px solid var(--ink);
-    background: var(--paper);
-    box-shadow: 2px 2px 0 var(--ink);
-  }
-  .key-btn:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0 0 0 var(--ink);
-  }
-  .cipher-actions {
-    grid-column: 1 / -1;
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-  }
+.signature{
+  margin-top:2rem;
+  font-size:2.2rem;
+  text-align:right;
+  font-family: "Georgia", cursive, serif;
+  font-style:italic;
+  color:#222;
+}
 
-  /* Secret Drawer Section */
-  .secret-wrapper {
-    position: relative;
-    margin-top: 2rem;
-  }
-  .secret-lock {
-    background: repeating-linear-gradient(45deg, var(--paper-dark), var(--paper-dark) 20px, var(--paper) 20px, var(--paper) 40px);
-    border: 4px solid var(--ink);
-    padding: 4rem 2rem;
-    text-align: center;
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .secret-lock.unlocked { display: none; }
-  .confidential-stamp {
-    color: var(--accent);
-    border: 5px solid var(--accent);
-    font-size: 3rem;
-    font-weight: 900;
-    padding: 1rem 2rem;
-    transform: rotate(-10deg);
-    font-family: var(--font-mono);
-    margin-bottom: 1rem;
-  }
-  
-  .secret-content {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .secret-wrapper.is-open .secret-content {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  /* Modals (Reports) */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 300;
-    display: none;
-    place-items: center;
-    padding: 1rem;
-  }
-  .modal-overlay.active { display: grid; }
-  
-  .modal-doc {
-    background: var(--paper);
-    max-width: 700px;
-    width: 100%;
-    padding: clamp(1.5rem, 4vw, 3rem);
-    border: 2px solid var(--ink);
-    box-shadow: 15px 15px 0 rgba(0,0,0,0.5);
-    position: relative;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .modal-header {
-    font-family: var(--font-mono);
-    border-bottom: 2px dashed var(--ink);
-    padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-  .modal-doc h2 {
-    font-size: 2rem;
-    line-height: 1;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-  .modal-doc .text-body {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    text-align: justify;
-  }
-  
-  .close-btn {
-    margin-top: 2rem;
-    width: 100%;
-    padding: 1rem;
-    font-size: 1rem;
-  }
+/* Pied de Page */
+.footer{
+  width:min(var(--max),100%);
+  margin:0 auto;
+  border-top:1px solid rgba(255,255,255,.1);
+  padding:1.5rem 0 2.5rem;
+  font-family:"Courier New", monospace;
+  color:var(--muted);
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+}
 
-  /* Toast Notification */
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 1rem 1.5rem;
-    font-family: var(--font-mono);
-    font-weight: bold;
-    text-transform: uppercase;
-    z-index: 400;
-    transform: translateY(150%);
-    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+/* Fenêtre de Rapport (Modal) */
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:150;
+  display:none;
+  place-items:center;
+  background:rgba(0,0,0,.86);
+  padding:1.5rem;
+}
+.modal.active{display:grid}
+.report{
+  width:min(800px,100%);
+  max-height:86vh;
+  overflow-y:auto;
+  background:var(--paper);
+  color:var(--paper-text);
+  box-shadow:0 40px 100px rgba(0,0,0,.9);
+  padding:clamp(1.5rem,5vw,3rem);
+  border:5px double #111;
+  position:relative;
+}
+.report:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 19px,rgba(0,0,0,.015) 20px),
+    radial-gradient(circle at 100% 0,rgba(0,0,0,.08),transparent 15rem);
+  pointer-events:none;
+}
+.report>*{position:relative}
+.report-head{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  border-bottom:2px dashed rgba(0,0,0,.22);
+  padding-bottom:.8rem;
+  margin-bottom:1.5rem;
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  font-size:.78rem;
+  font-weight:bold;
+}
+.report h2{
+  margin:.4rem 0 1.2rem;
+  font-family: Georgia, serif;
+  text-transform:uppercase;
+  letter-spacing:-.02em;
+  font-size:1.7rem;
+  font-weight:900;
+  line-height:1.1;
+}
+
+/* Colonnes de rapport */
+.report-text{
+  font-family: Georgia, serif;
+  font-size:1rem;
+  line-height:1.72;
+  text-align:justify;
+  text-justify:inter-word;
+  column-count:2;
+  column-gap:2rem;
+  column-rule:1px dashed rgba(0,0,0,.15);
+  margin-top:1.5rem;
+}
+@media (max-width: 768px) {
+  .report-text {
+    column-count: 1;
+    column-gap: 0;
+    column-rule: none;
   }
-  .toast.show { transform: translateY(0); }
+}
+.report-text p {
+  margin:0 0 1.2rem;
+}
+
+.double-rule {
+  border-top:1px solid var(--line-dark);
+  border-bottom:1px solid var(--line-dark);
+  height:3px;
+  margin:1.5rem 0;
+}
+
+.report-actions{
+  display:flex;
+  justify-content:space-between;
+  gap:.75rem;
+  flex-wrap:wrap;
+  margin-top:1.8rem;
+  border-top:1px solid rgba(0,0,0,.12);
+  padding-top:1.2rem;
+}
+
+/* Système de Notification Type Tampon */
+.toast{
+  position:fixed;
+  right:2rem;
+  bottom:2rem;
+  z-index:300;
+  background:var(--paper);
+  color:var(--paper-text);
+  border:3px double #111;
+  padding:.8rem 1.4rem;
+  box-shadow:0 20px 45px rgba(0,0,0,.65);
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:.75rem;
+  font-weight:bold;
+  transform:translateY(180%) rotate(-3deg);
+  transition:transform .4s cubic-bezier(.175,.885,.32,1.275);
+}
+.toast.show{transform:translateY(0) rotate(-3deg)}
+
+.hidden-audio{display:none}
+
+@media print{
+  body{background:#fff!important;color:#000!important}
+  .start-screen,.left-panel,#rain,#webCanvas,#memoryCanvas,.hero,.section-head,.board,.reel,.puzzle-box,.footer,.lock-cover,.big-moon{display:none!important}
+  .layout{display:block}
+  .secret{box-shadow:none;border:0}
+  .secret.locked .secret-body{display:block}
+  .final-letter{box-shadow:none;transform:none}
+}
 </style>
 </head>
 <body>
-
 <canvas id="rain"></canvas>
+<canvas id="webCanvas"></canvas>
+<canvas id="memoryCanvas"></canvas>
 
-<!-- Start Screen -->
 <div class="start-screen" id="startScreen">
   <div class="start-card">
-    <h1>Dossier<br>Pisces Noir</h1>
-    <p>Une enquête d'anniversaire en noir et blanc. Pas pour accuser le passé, mais pour suivre ce qui reste lumineux quand la nuit devient compliquée.</p>
-    <button id="startBtn" style="padding: 1rem 2rem; font-size: 1rem;">Ouvrir l'Archive</button>
+    <span class="case-tag">Pièce d'archive protégée</span>
+    <h1>Dossier Pisces Noir</h1>
+    <p>
+      Une enquête d'anniversaire en noir et blanc. Pas pour accuser le passé,
+      mais pour suivre ce qui reste lumineux quand la nuit devient complexe.
+      Activez la console de bureau pour charger les fréquences de mémoire.
+    </p>
+    <button class="primary-btn" id="startBtn">Ouvrir le dossier</button>
   </div>
 </div>
 
-<div class="newspaper-wrapper">
-  <!-- Masthead -->
-  <header class="masthead">
-    <div class="masthead-top">
-      <span>Bulletin Exclusif</span>
-      <span>Vendredi 12 Juin 2026</span>
-      <span>Tarif : Un Sourire</span>
-    </div>
-    <h1>L'Écho du Bureau</h1>
-    <div class="masthead-bottom">
-      <span>Météo : Pluie Battante</span>
-      <span>Édition : Archive Scellée</span>
-      <span>Chef d'Enquête : Le Détective</span>
-    </div>
-  </header>
-
+<div class="site">
   <div class="layout">
-    <!-- Left Column: Editorial & Radio -->
-    <aside class="sidebar">
-      <div class="widget">
-        <div class="widget-title">Statut de l'Enquête</div>
-        <div class="status-row" id="status1"><span>Pièce A inspectée</span><span class="stamp">ATTENTE</span></div>
-        <div class="status-row" id="status2"><span>Pièce B inspectée</span><span class="stamp">ATTENTE</span></div>
-        <div class="status-row" id="status3"><span>Pièce C inspectée</span><span class="stamp">ATTENTE</span></div>
-        <div class="status-row" id="statusPuzzle"><span>Code du Coffret</span><span class="stamp">VERROU</span></div>
-        <div class="status-row" id="statusFinal"><span>Dossier Final</span><span class="stamp">SCELLÉ</span></div>
-      </div>
+    <aside class="left-panel">
+      <section class="panel panel-pad">
+        <h3>Statut de l'enquête</h3>
+        <div class="mini-row" id="status1"><span>Pièce A inspectée</span><span class="stamp">EN ATTENTE</span></div>
+        <div class="mini-row" id="status2"><span>Pièce B inspectée</span><span class="stamp">EN ATTENTE</span></div>
+        <div class="mini-row" id="status3"><span>Pièce C inspectée</span><span class="stamp">EN ATTENTE</span></div>
+        <div class="mini-row" id="statusPuzzle"><span>Coffret résolu</span><span class="stamp">VERROU</span></div>
+        <div class="mini-row" id="statusFinal"><span>Lettre finale</span><span class="stamp">SCELLÉE</span></div>
+      </section>
 
-      <div class="widget">
-        <div class="widget-title">Console de Fréquences</div>
-        <div class="radio-screen">
-          <div class="radio-freq" id="freqDisplay">88.5 MHz</div>
-          <div class="radio-name" id="nameDisplay">Archives de nostalgie</div>
+      <section class="panel radio">
+        <h3>Radio du bureau</h3>
+        <div class="radio-face">
+          <div class="radio-screen">
+            <div class="freq" id="freq">88.5 MHz</div>
+            <div class="station-name" id="stationName">Archives de nostalgie</div>
+          </div>
         </div>
-        <div class="stations-grid">
-          <button class="station-btn active" data-track="tacos" data-freq="88.5 MHz" data-name="Archives de nostalgie">88.5 Tacos</button>
-          <button class="station-btn" data-track="pisces" data-freq="92.1 MHz" data-name="Fréquence Principale">92.1 Pisces</button>
-          <button class="station-btn" data-track="fallen" data-freq="104.3 MHz" data-name="Pas Perdus">104.3 Fallen</button>
-          <button class="station-btn" id="moonStation" data-track="moon" data-freq="97.7 MHz" data-name="Clair de Lune" disabled>97.7 Scellé</button>
+        <div class="scope-wrap"><canvas id="scope"></canvas></div>
+        <div class="stations">
+          <button class="station active" data-track="tacos" data-freq="88.5 MHz" data-name="Archives de nostalgie">88.5 Nostalgie</button>
+          <button class="station" data-track="pisces" data-freq="92.1 MHz" data-name="Pisces, fréquence principale">92.1 Pisces</button>
+          <button class="station" data-track="fallen" data-freq="104.3 MHz" data-name="Pas perdus">104.3 Enquête</button>
+          <button class="station locked" id="moonStation" data-track="moon" data-freq="97.7 MHz" data-name="Clair de lune" disabled>97.7 Scellée</button>
         </div>
-        <p style="font-family: var(--font-mono); font-size: 0.75rem; margin-top: 1rem; opacity: 0.8;">
-          Note : Les pistes s'enchaînent automatiquement pour créer l'ambiance globale du bureau.
+        <div class="radio-mini-actions">
+          <button class="ghost-btn" onclick="startReelMode()">Mode boucle</button>
+          <button class="ghost-btn" onclick="restartTrack()">Réécouter</button>
+        </div>
+        <div class="volume-line">
+          <span>Volume</span><input id="volume" type="range" min="0" max="1" step=".01" value=".55">
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="timecode"><span id="timeNow">0:00</span><span id="timeTotal">0:00</span></div>
+        <p class="now-playing" id="radioNote">
+          Nostalgie diffuse la version mélancolique de Raining Tacos. Ajustez la fréquence selon vos découvertes.
         </p>
-      </div>
+      </section>
+
+      <section class="panel panel-pad">
+        <h3>Notice d'archive</h3>
+        <div class="mini-row"><span>Langue</span><span>Français</span></div>
+        <div class="mini-row"><span>Régime</span><span>Authenticité</span></div>
+        <div class="mini-row"><span>Esthétique</span><span>Presse, pluie, ombre</span></div>
+      </section>
     </aside>
 
-    <!-- Main Content -->
-    <main class="content">
-      
-      <!-- Lead Story -->
-      <section class="section" style="padding-top: 0;">
-        <span class="kicker">Dossier Principal - Minuit Passé</span>
-        <h2 class="headline">Joyeux Anniversaire</h2>
-        <div class="newspaper-cols">
-          <p class="drop-cap">Ce soir, le monde s'organise en noir et blanc pour mieux laisser rayonner l'essentiel. À travers la pluie, les rideaux clos et l'encre des archives, demeure une vérité indélébile : tu es une personne rare, magnétique, difficile à oublier.</p>
-          <p>Je te souhaite une année sereine, libre, et lumineuse. La route se construit devant toi avec de la grâce et une force silencieuse. Parcours les preuves ci-dessous pour déverrouiller le message final.</p>
+    <main>
+      <!-- En-tête vintage style grand journal -->
+      <header class="newspaper-masthead">
+        <div class="masthead-top">
+          <div>BULLETIN SPÉCIAL D'ANNIVERSAIRE</div>
+          <div>VENDREDI 12 JUIN 2026</div>
+          <div>TARIF : UN SOURIRE</div>
+        </div>
+        <h1 class="masthead-title">L'Écho du Bureau</h1>
+        <div class="masthead-bottom">
+          <div><strong>MÉTÉO :</strong> ORAGE & PLUIE CONSTANTE</div>
+          <div><strong>ÉDITION :</strong> UNIQUE</div>
+          <div><strong>CHEF DE CABINET :</strong> LE DÉTECTIVE</div>
+        </div>
+      </header>
+
+      <section class="hero" id="top">
+        <div class="hero-inner">
+          <div class="hero-grid">
+            <div>
+              <div class="kicker">Bureau privé - Heure tardive</div>
+              <h1>Joyeux <span>Anniversaire</span></h1>
+              <p class="hero-copy">
+                Ce soir, le monde se dépouille de ses couleurs pour laisser briller l'essentiel.
+                À travers l'eau qui coule sur les carreaux, les stores baissés et les vieux feuillets d'archives, une vérité demeure :
+                tu es rare, magnétique, difficile à oublier. Je te souhaite une année libre, paisible et lumineuse.
+              </p>
+              <div class="hero-actions">
+                <button class="primary-btn" onclick="document.getElementById('preuves').scrollIntoView()">Découvrir les preuves</button>
+                <button class="ghost-btn" onclick="startReelMode()">Lancer la boucle</button>
+              </div>
+            </div>
+            <div class="case-card">
+              <h2>Registre Pisces Noir</h2>
+              <div class="case-meta">
+                <div class="file-line"><span>Identité</span><span>Sujet Pisces</span></div>
+                <div class="file-line"><span>Objet</span><span>Célébration</span></div>
+                <div class="file-line"><span>Style</span><span>Encre d'époque, grain noir</span></div>
+                <div class="file-line"><span>Constat</span><span>Une trace marquante</span></div>
+                <div class="file-line"><span>Combinaison</span><span>Regard / Force / Mystère</span></div>
+                <div class="file-line"><span>Fréquence d'or</span><span>Chanson secrète</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- Proofs Section -->
       <section class="section" id="preuves">
-        <span class="kicker">Galerie d'Investigation</span>
-        <h2 class="headline">Table des Preuves</h2>
-        <p style="font-family: var(--font-mono); font-size: 0.9rem;">Examinez les trois photographies d'archives. Chacune dissimule un mot-clef nécessaire pour la combinaison mécanique du coffret. (Cliquez pour lire le rapport).</p>
-        
-        <div class="photo-grid">
-          <figure class="photo-card" onclick="openReport(1)">
-            <img src="assets/photos/piece_1_noir.png" alt="Pièce A">
-            <div class="photo-caption">Pièce A : Regard</div>
-          </figure>
-          <figure class="photo-card" onclick="openReport(2)">
-            <img src="assets/photos/piece_2_noir.png" alt="Pièce B">
-            <div class="photo-caption">Pièce B : Force</div>
-          </figure>
-          <figure class="photo-card" onclick="openReport(3)">
-            <img src="assets/photos/piece_3_noir.png" alt="Pièce C">
-            <div class="photo-caption">Pièce C : Mystère</div>
-          </figure>
+        <div class="section-head">
+          <h2>Table des preuves</h2>
+          <p>Trois clichés capturés sur le vif, trois comptes rendus. Examinez-les pour extraire les mots-clés requis.</p>
+        </div>
+
+        <div class="board" id="board">
+          <div class="board-grid">
+            <div class="thread-area">
+              <svg class="thread-svg" viewBox="0 0 1000 650" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="175" y1="210" x2="505" y2="105"></line>
+                <line x1="505" y1="105" x2="810" y2="240"></line>
+                <line x1="175" y1="210" x2="810" y2="240"></line>
+                <line x1="505" y1="105" x2="495" y2="520"></line>
+              </svg>
+
+              <div class="polaroids">
+                <button class="photo-card" onclick="openReport(1)">
+                  <div class="photo-paper">
+                    <span class="pin"></span>
+                    <img src="assets/photos/piece_1_noir.png" alt="Pièce A">
+                    <div class="caption"><span>Pièce A</span><span>Regard</span></div>
+                  </div>
+                  <div class="photo-note">Observation : une intensité piégée sous la lumière faible, qui ne réclame rien pour se faire remarquer.</div>
+                </button>
+
+                <button class="photo-card" onclick="openReport(2)">
+                  <div class="photo-paper">
+                    <span class="pin"></span>
+                    <img src="assets/photos/piece_2_noir.png" alt="Pièce B">
+                    <div class="caption"><span>Pièce B</span><span>Force</span></div>
+                  </div>
+                  <div class="photo-note">Observation : une allure naturelle, exempte de fard, assurée sans élever la voix.</div>
+                </button>
+
+                <button class="photo-card" onclick="openReport(3)">
+                  <div class="photo-paper">
+                    <span class="pin"></span>
+                    <img src="assets/photos/piece_3_noir.png" alt="Pièce C">
+                    <div class="caption"><span>Pièce C</span><span>Mystère</span></div>
+                  </div>
+                  <div class="photo-note">Observation : une silhouette insaisissable, des traits rêveurs qui traversent le temps avec élégance.</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="timeline">
+              <div class="clue">
+                <strong>Indice 01</strong>
+                <p>Nulle nuance de couleur n'est nécessaire pour exprimer ses reliefs. Même épuré, son éclat subsiste.</p>
+              </div>
+              <div class="clue">
+                <strong>Indice 02</strong>
+                <p>La distance modifie le rythme de nos voix, mais jamais l'impact durable de ce qu'une personne a incarné.</p>
+              </div>
+              <div class="clue">
+                <strong>Indice 03</strong>
+                <p>Ce geste ne cherche pas à refaire le cours de l'histoire. Il dépose simplement une pensée, avec tact.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- The Cipher -->
+      <section class="section" id="souvenirs">
+        <div class="section-head">
+          <h2>Bobine de Mémoire</h2>
+          <p>Suivez les contours de la radio nostalgique pour découvrir les mots laissés dans la pénombre.</p>
+        </div>
+        <div class="reel">
+          <div class="reel-inner">
+            <div>
+              <h2 class="reel-title">Viser le vrai.</h2>
+              <p class="reel-text">
+                Il y a des impressions que l'on ne grime pas avec du spectaculaire. Cette bobine ne prétend pas travestir les faits, elle conserve des vérités simples : rare, magnétique, précieuse, singulière, inoubliable. Des mots qui glissent comme de l'eau sur la vitre froide de l'atelier d'imprimerie pour saluer ce qui a de la valeur.
+              </p>
+              <button class="ghost-btn" onclick="startReelMode()">Lancer la playlist</button>
+            </div>
+            <div class="word-machine" id="wordMachine"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="coffret">
-        <span class="kicker">Le Mécanisme</span>
-        <h2 class="headline">Le Coffret des Fréquences</h2>
-        <div class="newspaper-cols">
-          <p>Une note dactylographiée indique : <em>« Les rapports scellent chacun un mot-clef d'encre noire. Après examen complet des pièces A, B et C, alignez la combinaison (dans l'ordre A → B → C) pour déverrouiller la dernière porte de la station radio. »</em></p>
+        <div class="section-head">
+          <h2>Le Coffret des Fréquences</h2>
+          <p>Servez-vous de l'ordre logique de l'examen (Pièces A → B → C) pour aligner la combinaison rotative.</p>
         </div>
-        
-        <div class="cipher-console">
-          <div style="grid-column: 1 / -1;">
-            <div class="cipher-display" id="sequenceWindow"></div>
-            <div style="font-family: var(--font-mono); font-size: 0.75rem; margin-top: 0.5rem;" id="puzzleMsg">Saisissez la séquence issue des rapports.</div>
+
+        <div class="puzzle-box">
+          <div class="puzzle-paper">
+            <h3>Notes manuscrites du secrétaire</h3>
+            <p>
+              Les rapports ne sont pas de simples déclarations tapées à la machine. Chacun d'eux scelle un mot-clé précis.
+              Après étude approfondie des pièces A, B et C, ordonnez-les selon la chronologie de l'enquête.
+            </p>
+            <p>
+              L'énigme n'est pas un piège : elle invite à ouvrir le dernier canal secret de la radio. D'abord ce qui vous observe, puis ce qui vous tient droit, et enfin ce qui résiste à l'explication logique.
+            </p>
+            <p><strong>Rappel d'archive :</strong> A → B → C.</p>
           </div>
-          
-          <div class="cipher-keyboard">
-            <button class="key-btn" data-key="Lune">LUNE</button>
-            <button class="key-btn" data-key="Regard">REGARD</button>
-            <button class="key-btn" data-key="Silence">SILENCE</button>
-            <button class="key-btn" data-key="Force">FORCE</button>
-            <button class="key-btn" data-key="Mystere">MYSTÈRE</button>
-            <button class="key-btn" data-key="Pluie">PLUIE</button>
-          </div>
-          
-          <div class="cipher-actions">
-            <button onclick="resetPuzzle()">EFFACER</button>
-            <button onclick="checkPuzzle()" style="background: var(--ink); color: var(--paper);">VALIDER SÉQUENCE</button>
+
+          <div class="safe">
+            <h3>Disques d'Alignement</h3>
+            <div class="sequence-window" id="sequenceWindow"><em>Aucune entrée</em></div>
+            <div class="chips">
+              <button class="chip" data-key="lune">Lune</button>
+              <button class="chip" data-key="regard">Regard</button>
+              <button class="chip" data-key="silence">Silence</button>
+              <button class="chip" data-key="force">Force</button>
+              <button class="chip" data-key="mystere">Mystère</button>
+              <button class="chip" data-key="pluie">Pluie</button>
+            </div>
+            <div class="puzzle-actions">
+              <button class="ghost-btn" onclick="resetPuzzle()">Réinitialiser</button>
+              <button class="ghost-btn" onclick="checkPuzzle()">Valider</button>
+            </div>
+
+            <div class="dials">
+              <div class="dial">
+                <strong>A</strong>
+                <div class="dial-value">88.5</div>
+                <button class="dial-btn" onclick="switchStationByName('tacos')">Tuner</button>
+              </div>
+              <div class="dial">
+                <strong>B</strong>
+                <div class="dial-value">92.1</div>
+                <button class="dial-btn" onclick="switchStationByName('pisces')">Tuner</button>
+              </div>
+              <div class="dial">
+                <strong>C</strong>
+                <div class="dial-value">104.3</div>
+                <button class="dial-btn" onclick="switchStationByName('fallen')">Tuner</button>
+              </div>
+            </div>
+            <div class="puzzle-msg" id="puzzleMsg">Parcourez les dossiers photos, puis saisissez le code.</div>
           </div>
         </div>
       </section>
 
-      <!-- Final Secret Drawer -->
-      <section class="section secret-wrapper" id="secretDrawer">
-        <div class="secret-lock" id="secretLock">
-          <div class="confidential-stamp">SCELLÉ</div>
-          <h2 class="headline" style="font-size: 2.5rem;">Archive Finale Restreinte</h2>
-          <p style="font-family: var(--font-mono);">Inspectez les 3 rapports et résolvez le coffret pour briser le sceau.</p>
+      <section class="section" id="final">
+        <div class="section-head">
+          <h2>Le Tiroir Secret</h2>
+          <p>Dès que les indices sont analysés et le coffret décodé, le compartiment s'ouvrira.</p>
         </div>
-
-        <div class="secret-content">
-          <span class="kicker">Tiroir Secret Déverrouillé</span>
-          <h2 class="headline">À Toi, Dans La Lumière Basse</h2>
-          <div class="newspaper-cols">
-            <p class="drop-cap">Joyeux anniversaire. Je te l'écris doucement, comme on pose une page manuscrite sous la lampe du bureau, au cœur d'une nuit calme qui n'a pas encore décidé si elle préférait pleurer ou sourire.</p>
-            <p>Depuis quelque temps, nos voix n'empruntent plus les mêmes chemins. Il y a eu la distance, le silence, cette façon curieuse de ne plus nous adresser la parole. Je ne viens pas repeindre le passé, ni lui inventer des décors qu'il ne possède pas. Je désire seulement déposer ici ce qui demeure authentique, sans tumulte et sans regrets inutiles.</p>
-            <p>Tu es une personne singulière. Pas seulement belle. Belle serait trop réducteur, trop rapide, presque trop facile. Tu as cette présence qui s'exprime dans le secret des détails : une force dans l'expression, une discrétion qui cache ta fragilité, une grâce qui survit aux moments compliqués.</p>
-            <p>Je t'ai aimée sincèrement. Et même si la vie nous a déplacés sur une feuille plus difficile, je refuse que le jour de ton anniversaire porte le poids de nos blessures. Ce moment doit te trouver plus légère, plus sereine, plus proche de ton propre équilibre.</p>
-            <p>Que la vie te traite avec délicatesse. Que ton cœur retrouve son apaisement. Et que, quelque part dans les nuances de cette modeste enquête d'archives, tu retiennes ceci : je te souhaite le meilleur, sincèrement.</p>
-            <p style="font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; text-align: right; margin-top: 2rem;">Ton détective</p>
+        <div class="secret locked" id="secret">
+          <div class="lock-cover">
+            <div>
+              <div class="lock-icon">🔒</div>
+              <h2>Dossier Scellé</h2>
+              <p>Ouvre les trois pièces d'enquête de la table, puis résous la combinaison mécanique du coffret pour libérer l'accès.</p>
+              <div class="lock-status">
+                <div id="lockReports">Rapports : 0 / 3</div>
+                <div id="lockPuzzle">Coffret : verrouillé</div>
+              </div>
+            </div>
+          </div>
+          <div class="secret-body">
+            <div class="letter-wrap">
+              <div class="big-moon"></div>
+              <article class="final-letter" id="finalLetter">
+                <h2>À toi, dans la lumière basse</h2>
+                <div class="newspaper-cols">
+                  <p class="drop-cap">
+                    Joyeux anniversaire. Je te l'écris doucement, comme on glisse une page dactylographiée sous la lampe de table, au coeur d'une nuit paisible qui n'a pas encore décidé si elle préférait pleurer ou sourire.
+                  </p>
+                  <p>
+                    Depuis quelque temps, nos chemins de voix divergent. Il y a eu la distance, le silence, cette étrange habitude de ne plus nous adresser la parole. Je ne viens pas repeindre le passé, ni lui prêter des parures qu'il ne possède pas. Je désire simplement poser ici ce qui reste vrai, loin des bruits et des rancunes stériles.
+                  </p>
+                  <p>
+                    Tu es une personne singulière. Pas simplement belle. Belle serait trop réducteur, trop rapide, presque trop convenu. Tu disposes de cette présence qui s'écrit dans l'ombre des détails : une force tranquille dans le regard, une pudeur qui enveloppe tes doutes, une dignité qui survit aux moments compliqués. Tu possèdes l'art rare de marquer les mémoires bien après les derniers mots échangés.
+                  </p>
+                  <p>
+                    Je t'ai aimée sincèrement. Et même si la vie nous a placés sur une page plus rude, je refuse que le jour de ton anniversaire porte la trace de ce qui nous a abîmés. Ce moment doit te trouver plus légère, plus tranquille, plus proche de ton propre équilibre.
+                  </p>
+                  <p>
+                    Aussi, je te souhaite une année clémente. Une année qui t'offre la paix sans éteindre ta flamme. Une année pavée de matins clairs, de sommeils sereins, de choix inspirés, avec l'intime certitude que tu mérites d'être estimée avec patience, égard et bienveillance.
+                  </p>
+                  <p>
+                    Que la vie te traite avec douceur. Que ton coeur trouve ce qui l'apaise. Et que, quelque part dans les ombres et les lumières de cette modeste archive, tu retiennes ceci : je te souhaite le meilleur, sincèrement.
+                  </p>
+                  <p><strong>Joyeux anniversaire, mon plus beau mystère.</strong></p>
+                  <div class="signature">Ton détective</div>
+                </div>
+                <div class="report-actions">
+                  <button class="paper-btn" onclick="switchStationByName('moon')">Jouer Moonlight Candles</button>
+                  <button class="paper-btn" onclick="window.print()">Imprimer le document</button>
+                </div>
+              </article>
+            </div>
           </div>
         </div>
       </section>
-      
     </main>
   </div>
 </div>
 
-<!-- Modal Report (Dossier View) -->
-<div class="modal-overlay" id="reportModal">
-  <div class="modal-doc">
-    <div class="modal-header">
-      <span id="reportCase">Dossier d'Analyse</span>
+<footer class="footer">
+  Dossier Pisces Noir. Fait pour une seule nuit, mais assemblé pour demeurer.
+</footer>
+
+<div class="modal" id="modal">
+  <div class="report">
+    <div class="report-head">
+      <span id="reportCase">Dossier Pisces Noir</span>
       <span id="reportNumber">Rapport 00</span>
     </div>
-    <h2 id="reportTitle">Titre du Rapport</h2>
-    <div class="text-body" id="reportText"></div>
-    <button class="close-btn" onclick="closeReport()">REFERMER LE DOSSIER</button>
+    <h2 id="reportTitle"></h2>
+    <div class="report-text" id="reportText"></div>
+    <div class="report-actions">
+      <button class="paper-btn" onclick="closeReport()">Fermer l'archive</button>
+      <button class="paper-btn" onclick="switchStationByName('fallen')">Lire sous écoute (Fallen Down)</button>
+    </div>
   </div>
 </div>
 
-<div class="toast" id="toast">Notification</div>
+<div class="toast" id="toast">Dossier mis à jour</div>
 
-<!-- Audio Files -->
-<audio class="hidden-audio" id="audio-tacos" src="assets/audio/raining_tacos_sad.mp3" preload="auto"></audio>
 <audio class="hidden-audio" id="audio-pisces" src="assets/audio/pisces.mp3" preload="auto"></audio>
+<audio class="hidden-audio" id="audio-tacos" src="assets/audio/raining_tacos_sad.mp3" preload="auto"></audio>
 <audio class="hidden-audio" id="audio-fallen" src="assets/audio/fallen_down.mp3" preload="auto"></audio>
 <audio class="hidden-audio" id="audio-moon" src="assets/audio/moonlight_candles.mp3" preload="auto"></audio>
 
 <script>
-// --- DATA ---
 const reports = {
   1: {
-    number: "Pièce 01",
-    title: "Le Regard Qui Conserve La Lueur",
-    text: "<p>Le noir et blanc élimine le bruit du monde, et pourtant la présence de ton visage demeure entière. On y devine une douceur tenace, une attitude calme mais souveraine, impossible à négliger. Nul besoin de bâtir des souvenirs imaginaires pour rehausser la portée de ce constat. Tu possèdes une élégance qui transcende les traits.</p><p style='font-family: Courier New, monospace; font-weight: bold; margin-top: 1.5rem;'>MOT-CLEF EXTRAIT : REGARD</p>"
+    number: "Rapport de constatations 01",
+    title: "Pièce A : Le regard témoin",
+    key: "Regard",
+    text: `
+      <p class="drop-cap">Il y a dans cette photographie une dimension intemporelle, semblable à un tirage exhumé du double-fond d'un secrétaire en acajou. Le noir et blanc étouffe le brouhaha environnant, laissant la présence de ton visage intacte. On y lit une douceur tenace, une posture tranquille mais royale, impossible à ignorer.</p>
+      <p>Nul besoin d'échafauder des souvenirs imaginaires pour souligner la force de cette impression. La réalité brute suffit. Tu es rare. Tu disposes d'une élégance qui dépasse de loin les lignes de tes traits ; elle réside dans ta démarche, dans ton attitude, dans cette part de mystère qu'aucun compte rendu ne saura inventorier de manière exhaustive.</p>
+      <p>Pour ton anniversaire, je souhaite que tu sois regardée avec le même infini respect que ce portrait commande : sans attentes indues, sans jugements de valeur, avec attention et bienveillance.</p>
+      <div class="double-rule"></div>
+      <p style="font-family:'Courier New', monospace; font-size:0.8rem; color:#444;"><strong>Mots d'archive :</strong> Regard.</p>
+    `
   },
   2: {
-    number: "Pièce 02",
-    title: "La Force Des Silences",
-    text: "<p>Cette seconde pièce s'articule de manière différente. Elle est plus abrupte, semblable à un arrêt sur image d'un classique de cinéma. Le visage s'expose, les ombres révèlent la ligne. Tu portes en toi cette solidité silencieuse qui échappe aux imitations. Quelque chose de profond, de magnétique. C'est un fait établi.</p><p style='font-family: Courier New, monospace; font-weight: bold; margin-top: 1.5rem;'>MOT-CLEF EXTRAIT : FORCE</p>"
+    number: "Rapport de constatations 02",
+    title: "Pièce B : La force discrète",
+    key: "Force",
+    text: `
+      <p class="drop-cap">Cette seconde pièce s'articule sur un ton différent. Plus contrastée, plus abrupte, elle rappelle un arrêt sur image tiré d'un grand classique de cinéma. Tout artifice est balayé. Les traits s'exposent, les ombres sculptent le reste : elles ne dissimulent rien, elles révèlent la ligne de force.</p>
+      <p>Tu portes en toi cette solidité silencieuse qui n'admet aucune contrefaçon. Une présence magnétique, persistante. Même quand l'horizon se charge de nuages ou que le silence s'installe, je sais mesurer ce que tu as incarné d'unique à mes yeux. Ce n'est pas une formule polie. C'est un fait établi, et l'évidence pèse parfois son poids.</p>
+      <p>J'espère sincèrement que cette nouvelle année réduira les charges sur tes épaules, te redonnera le souffle tranquille de la liberté et t'apportera des raisons durables de te savoir appréciée de la vie.</p>
+      <div class="double-rule"></div>
+      <p style="font-family:'Courier New', monospace; font-size:0.8rem; color:#444;"><strong>Mots d'archive :</strong> Force.</p>
+    `
   },
   3: {
-    number: "Pièce 03",
-    title: "L'Étoile Dans La Nuit",
-    text: "<p>Ce qui subsiste, c'est l'expression de ton visage : pensive, malicieuse, habitée par une liberté secrète. Tu es de ces personnes impossibles à définir d'une seule phrase. Unique, indéniablement. Captivante, sans aucun doute. Singulière et imprévisible. Ton éclat n'a nul besoin d'être infaillible pour être précieux.</p><p style='font-family: Courier New, monospace; font-weight: bold; margin-top: 1.5rem;'>MOT-CLEF EXTRAIT : MYSTÈRE</p>"
+    number: "Rapport de constatations 03",
+    title: "Pièce C : L'étoile dans l'encre noire",
+    key: "Mystère",
+    text: `
+      <p class="drop-cap">Dans cette troisième épreuve, les symboles familiers s'estompent pour n'être plus que de fins faisceaux de lumière argentée. Ce qui subsiste, c'est l'expression même de ton visage : pensive, enjouée, habitée par une liberté intérieure jalousement gardée. Une image peut s'avérer légère tout en portant de la profondeur.</p>
+      <p>Tu es de ces personnes impossibles à enfermer dans une définition étroite. Unique, sans conteste. Captivante, à n'en pas douter. Mais encore singulière, imprévisible, éclairant le décor de ta propre et exclusive lumière. Nous ne partageons sans doute plus la complicité d'autrefois, et je ne saurais le feindre. Pourtant, mes vœux pour ton bonheur restent intacts.</p>
+      <p>Joyeux anniversaire. Que cette journée soit la tienne, et qu'elle te rappelle que ton éclat n'a nul besoin d'être parfait pour être infiniment précieux.</p>
+      <div class="double-rule"></div>
+      <p style="font-family:'Courier New', monospace; font-size:0.8rem; color:#444;"><strong>Mots d'archive :</strong> Mystère.</p>
+    `
   }
 };
 
-// --- AUDIO LOGIC (Intelligent Looping & State Machine) ---
-const audioEl = {
-  tacos: document.getElementById("audio-tacos"),
+const audio = {
   pisces: document.getElementById("audio-pisces"),
+  tacos: document.getElementById("audio-tacos"),
   fallen: document.getElementById("audio-fallen"),
   moon: document.getElementById("audio-moon")
 };
 
-let globalTrack = "tacos"; // Default starting song
-let currentTrack = "tacos";
-let loopPlaylist = ["tacos", "pisces", "fallen"];
-let isReportOpen = false;
+let activeTrack = null;
+let currentTrack = "tacos"; // Par défaut réglé sur "tacos" (It's Raining Tacos Sad) [default song is tacos]
+let unlocked = {1:false,2:false,3:false};
+let puzzleSequence = [];
+let puzzleSolved = false;
 
-function toast(msg) {
+// Variables pour suivre l'état de la radio globale avant consultation d'une photo
+let savedRadioTrack = "tacos";
+let savedRadioTime = 0;
+let savedRadioPlaying = false;
+let isModalOpen = false;
+
+const playlistSequence = ["tacos", "pisces", "fallen", "moon"];
+const volume = document.getElementById("volume");
+
+// Configuration initiale
+Object.values(audio).forEach(a => {
+  a.volume = parseFloat(volume.value);
+  a.loop = false;
+});
+
+volume.addEventListener("input", () => {
+  Object.values(audio).forEach(a => a.volume = parseFloat(volume.value));
+});
+
+function toast(text){
   const t = document.getElementById("toast");
-  t.textContent = msg;
+  t.textContent = text;
   t.classList.add("show");
   clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() => t.classList.remove("show"), 3000);
+  window.toastTimer = setTimeout(()=>t.classList.remove("show"), 2500);
 }
 
-function updateRadioUI(trackName) {
-  document.querySelectorAll(".station-btn").forEach(b => b.classList.remove("active"));
-  const btn = document.querySelector(`.station-btn[data-track="${trackName}"]`);
-  if (btn) {
-    btn.classList.add("active");
-    document.getElementById("freqDisplay").textContent = btn.dataset.freq;
-    document.getElementById("nameDisplay").textContent = btn.dataset.name;
+function updateCandleMode() {
+  if (currentTrack === "moon" && activeTrack && !activeTrack.paused) {
+    document.body.classList.add("candle-mode");
+  } else {
+    document.body.classList.remove("candle-mode");
   }
 }
 
-function playTrack(name, restart = false) {
-  Object.entries(audioEl).forEach(([k, a]) => {
-    if (k !== name) a.pause();
+function playTrack(name, restart=true){
+  if(name === "moon" && document.getElementById("moonStation").disabled && !isModalOpen){
+    toast("La fréquence 97.7 est encore scellée.");
+    return;
+  }
+  Object.entries(audio).forEach(([key,a]) => {
+    if(key !== name){ a.pause(); }
   });
-  const t = audioEl[name];
-  if (t) {
-    t.volume = 0.6; // Base volume
-    if (restart || t.ended || t.currentTime === 0) t.currentTime = 0;
-    t.play().catch(() => {});
-    currentTrack = name;
-    updateRadioUI(name);
+  activeTrack = audio[name];
+  currentTrack = name;
+  if(activeTrack){
+    activeTrack.volume = parseFloat(volume.value);
+    if(restart || activeTrack.ended) activeTrack.currentTime = 0;
+    activeTrack.play()
+      .then(() => updateCandleMode())
+      .catch(()=>toast("Cliquez sur la page pour activer la radio."));
   }
 }
 
-function playNextInLoop() {
-  let idx = loopPlaylist.indexOf(globalTrack);
-  idx = (idx + 1) % loopPlaylist.length;
-  globalTrack = loopPlaylist[idx];
-  playTrack(globalTrack, true);
-  toast("Piste suivante : " + document.querySelector(`.station-btn[data-track="${globalTrack}"]`).dataset.name);
+function switchStation(btn, restart=true){
+  const track = btn.dataset.track;
+  playTrack(track, restart);
+  updateRadioUIForTrack(track);
+  
+  const note = document.getElementById("radioNote");
+  if(track === "tacos") {
+    note.textContent = "La mélancolie de Raining Tacos Sad est active. Écoute fluide et enveloppante.";
+    burstWords();
+    document.getElementById("souvenirs").scrollIntoView();
+  }
+  if(track === "pisces") {
+    note.textContent = "La bande-son feutrée de Pisces prend le relais. Un flux lent, propice à l'introspection.";
+  }
+  if(track === "fallen") {
+    note.textContent = "Fallen Down accompagne vos lectures. Calme, fragile, nostalgique.";
+  }
+  if(track === "moon") {
+    note.textContent = "Moonlight Candles illumine le bureau d'une douce lueur intime.";
+    document.getElementById("final").scrollIntoView();
+    moonFlash();
+  }
 }
 
-// Global "Ended" Event Listener for continuous flow
-Object.entries(audioEl).forEach(([key, a]) => {
-  a.addEventListener("ended", () => {
-    if (isReportOpen && key === 'moon') {
-      // Loop the candle song while reading the report
-      a.currentTime = 0;
-      a.play();
-    } else if (!isReportOpen && key === globalTrack) {
-      // Move to the next song in the background playlist
-      playNextInLoop();
+function updateRadioUIForTrack(trackName) {
+  document.querySelectorAll(".station").forEach(b => {
+    b.classList.remove("active");
+    if(b.dataset.track === trackName) {
+      b.classList.add("active");
+      document.getElementById("freq").textContent = b.dataset.freq;
+      document.getElementById("stationName").textContent = b.dataset.name;
     }
   });
-});
+  updateCandleMode();
+}
 
-// Manual Radio Switching
-document.querySelectorAll(".station-btn").forEach(btn => {
+document.querySelectorAll(".station").forEach(btn => {
   btn.addEventListener("click", () => {
+    // Si l'utilisateur clique manuellement, on met à jour la station sauvegardée
     const track = btn.dataset.track;
-    if (isReportOpen && track !== 'moon') {
-      // If reading report, just set the upcoming global track but don't interrupt 'moon'
-      globalTrack = track;
-      updateRadioUI(track);
-      toast("Fréquence mémorisée. Reprendra à la fermeture du dossier.");
-    } else {
-      globalTrack = track;
-      playTrack(globalTrack, true);
+    if (track !== "moon" || !document.getElementById("moonStation").disabled) {
+      savedRadioTrack = track;
     }
+    switchStation(btn, true);
   });
 });
 
-// START
+function switchStationByName(name, restart=true){
+  const btn = document.querySelector(`.station[data-track="${name}"]`);
+  if(btn) {
+    if (name !== "moon" || !document.getElementById("moonStation").disabled) {
+      savedRadioTrack = name;
+    }
+    switchStation(btn, restart);
+  }
+}
+
+function startReelMode(){
+  switchStationByName("tacos", true);
+  toast("Mode lecture continue activé : boucle complète.");
+}
+
+function restartTrack(){
+  if(activeTrack){
+    activeTrack.currentTime = 0;
+    activeTrack.play().then(() => updateCandleMode()).catch(()=>{});
+    toast("Piste réinitialisée au début.");
+  } else {
+    switchStationByName(currentTrack || "tacos", true);
+  }
+}
+
+// Enchaînements de la boucle globale sans débordement
+Object.entries(audio).forEach(([key,a]) => {
+  a.addEventListener("play", () => updateCandleMode());
+  a.addEventListener("pause", () => updateCandleMode());
+  
+  a.addEventListener("ended", () => {
+    // Si le modal d'affichage d'un rapport est ouvert, on boucle en sourdine Moonlight
+    if (isModalOpen) {
+      if (key === "moon") {
+        a.currentTime = 0;
+        a.play().catch(()=>{});
+      }
+      return;
+    }
+
+    // Sinon, transition de la playlist générale
+    let currentIndex = playlistSequence.indexOf(key);
+    let nextIndex = (currentIndex + 1) % playlistSequence.length;
+    let nextTrackName = playlistSequence[nextIndex];
+
+    if (nextTrackName === "moon") {
+      const isMoonUnlocked = !document.getElementById("moonStation").disabled;
+      if (!isMoonUnlocked) {
+        nextTrackName = "tacos"; // Boucle de repli vers tacos si verrouillé
+      }
+    }
+
+    switchStationByName(nextTrackName, true);
+    toast(`Suivant : ${getTrackDisplayName(nextTrackName)}`);
+  });
+  
+  a.addEventListener("error", () => {
+    toast("Fichier sonore manquant ou bloqué.");
+  });
+});
+
+function getTrackDisplayName(name) {
+  if (name === "tacos") return "88.5 Nostalgie";
+  if (name === "pisces") return "92.1 Pisces";
+  if (name === "fallen") return "104.3 Enquête";
+  if (name === "moon") return "97.7 Moonlight";
+  return name;
+}
+
+function formatTime(s){
+  if(!isFinite(s) || s < 0) return "0:00";
+  const m = Math.floor(s/60);
+  const sec = Math.floor(s%60).toString().padStart(2,"0");
+  return `${m}:${sec}`;
+}
+
+function updateProgress(){
+  if(activeTrack && isFinite(activeTrack.duration) && activeTrack.duration > 0){
+    document.getElementById("progressFill").style.width = `${Math.min(100, (activeTrack.currentTime / activeTrack.duration) * 100)}%`;
+    document.getElementById("timeNow").textContent = formatTime(activeTrack.currentTime);
+    document.getElementById("timeTotal").textContent = formatTime(activeTrack.duration);
+  } else {
+    document.getElementById("progressFill").style.width = "0%";
+    document.getElementById("timeNow").textContent = "0:00";
+    document.getElementById("timeTotal").textContent = "0:00";
+  }
+  requestAnimationFrame(updateProgress);
+}
+updateProgress();
+
+// Démarrage du dossier
 document.getElementById("startBtn").addEventListener("click", () => {
   document.getElementById("startScreen").style.display = "none";
-  playTrack(globalTrack, true);
-  toast("Archive ouverte. Fréquence 88.5 active.");
+  // Initialisation explicite des volumes pour éviter tout sursaut
+  Object.values(audio).forEach(a => {
+    a.volume = parseFloat(volume.value);
+  });
+  switchStationByName("tacos", true); // Default is Tacos Sad [default song tacos]
+  toast("Bureau des archives ouvert.");
 });
 
-// --- INVESTIGATION & MODAL LOGIC ---
-let unlocked = {1: false, 2: false, 3: false};
-
-function updateStatus() {
-  const count = Object.values(unlocked).filter(Boolean).length;
-  if (count === 3 && puzzleSolved) {
-    document.getElementById("secretLock").classList.add("unlocked");
-    document.getElementById("secretDrawer").classList.add("is-open");
-    
-    const moonBtn = document.getElementById("moonStation");
-    moonBtn.disabled = false;
-    moonBtn.textContent = "97.7 MOONLIGHT";
-    
-    document.getElementById("statusFinal").classList.add("done");
-    document.getElementById("statusFinal").querySelector(".stamp").textContent = "OUVERT";
-    
-    // Add Moonlight to the global loop!
-    if(!loopPlaylist.includes('moon')) {
-       loopPlaylist.push('moon');
-    }
-    toast("Archive finale déverrouillée. Nouvelle fréquence détectée.");
-  }
-}
-
-// 1) Open Photo -> Play 'moon' instead of global
-function openReport(num) {
-  isReportOpen = true;
-  
-  // Pause the global track and start the candles one
-  if(audioEl[globalTrack]) audioEl[globalTrack].pause();
-  playTrack('moon', true);
-
+// Évènements d'ouverture des documents (Polaroids)
+function openReport(num){
   const r = reports[num];
   document.getElementById("reportNumber").textContent = r.number;
   document.getElementById("reportTitle").textContent = r.title;
   document.getElementById("reportText").innerHTML = r.text;
-  document.getElementById("reportModal").classList.add("active");
-  
+  document.getElementById("modal").classList.add("active");
+  isModalOpen = true;
+
+  // Sauvegarde de l'état radio global avant la transition [the candles one plays when clicked, restoring previous global state on collapse]
+  if (currentTrack !== "moon") {
+    savedRadioTrack = currentTrack;
+    if (activeTrack) {
+      savedRadioTime = activeTrack.currentTime;
+      savedRadioPlaying = !activeTrack.paused;
+    } else {
+      savedRadioPlaying = false;
+    }
+  }
+
+  // Jouer la musique "Moonlight Candles" (unlocked par les photos) sans superposition
+  playTrack("moon", true);
+  updateRadioUIForTrack("moon");
+
   unlocked[num] = true;
-  document.getElementById("status" + num).classList.add("done");
-  document.getElementById("status" + num).querySelector(".stamp").textContent = "VU";
-  updateStatus();
+  const row = document.getElementById("status" + num);
+  row.classList.add("done");
+  row.querySelector(".stamp").textContent = "VU";
+  updateLockStatus();
+  checkUnlock(false);
 }
 
-// 2) Close Photo -> Resume specific Global Track without overlapping
-function closeReport() {
-  document.getElementById("reportModal").classList.remove("active");
-  isReportOpen = false;
-  
-  // Stop 'moon', seamlessly resume the rightful global music state
-  audioEl['moon'].pause();
-  playTrack(globalTrack, false);
+function closeReport(){
+  document.getElementById("modal").classList.remove("active");
+  isModalOpen = false;
+
+  // On stoppe la piste "Moonlight" lancée temporairement
+  if (audio.moon) {
+    audio.moon.pause();
+  }
+
+  // Restauration propre de l'état d'origine global [no overlap, switch to rightful global music state on collapse]
+  currentTrack = savedRadioTrack;
+  activeTrack = audio[currentTrack];
+  if (activeTrack) {
+    activeTrack.currentTime = savedRadioTime;
+    if (savedRadioPlaying) {
+      activeTrack.play().catch(err => console.log("Audio restore interrupted:", err));
+    } else {
+      activeTrack.pause();
+    }
+    updateRadioUIForTrack(currentTrack);
+  }
 }
 
-// --- PUZZLE LOGIC ---
-let puzzleSequence = [];
-let puzzleSolved = false;
-const seqWindow = document.getElementById("sequenceWindow");
+document.getElementById("modal").addEventListener("click", e => {
+  if(e.target.id === "modal") closeReport();
+});
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape") closeReport();
+});
 
-document.querySelectorAll(".key-btn").forEach(btn => {
+function updateLockStatus(){
+  const count = [1,2,3].filter(n=>unlocked[n]).length;
+  document.getElementById("lockReports").textContent = `Rapports inspectés : ${count} / 3`;
+  document.getElementById("lockPuzzle").textContent = `Coffret : ${puzzleSolved ? "résolu" : "verrouillé"}`;
+}
+
+document.querySelectorAll(".chip").forEach(btn => {
   btn.addEventListener("click", () => {
-    if (puzzleSequence.length >= 3 || puzzleSolved) return;
-    puzzleSequence.push(btn.dataset.key);
-    seqWindow.textContent = puzzleSequence.join(" - ").toUpperCase();
+    if(puzzleSequence.length >= 3) return;
+    puzzleSequence.push({key: btn.dataset.key, label: btn.textContent});
+    renderSequence();
   });
 });
 
-function resetPuzzle() {
-  if(puzzleSolved) return;
-  puzzleSequence = [];
-  seqWindow.textContent = "EN ATTENTE D'ENTRÉE...";
-  document.getElementById("puzzleMsg").textContent = "Séquence réinitialisée.";
-}
-
-function checkPuzzle() {
-  if(puzzleSolved) return;
-  const count = Object.values(unlocked).filter(Boolean).length;
-  if (count < 3) {
-    document.getElementById("puzzleMsg").textContent = "ERREUR : Inspectez les 3 pièces d'abord.";
-    toast("Informations insuffisantes.");
+function renderSequence(){
+  const win = document.getElementById("sequenceWindow");
+  if(puzzleSequence.length === 0){
+    win.innerHTML = "<em>Aucune entrée</em>";
     return;
   }
-  
-  const attempt = puzzleSequence.join("-").toLowerCase();
-  if (attempt === "regard-force-mystere") {
+  win.innerHTML = puzzleSequence.map(item => `<span>${item.label}</span>`).join("");
+}
+
+function resetPuzzle(){
+  puzzleSequence = [];
+  renderSequence();
+  document.getElementById("puzzleMsg").textContent = "Combinaison effacée. Relisez les pièces d'enquête.";
+}
+
+function checkPuzzle(){
+  const count = [1,2,3].filter(n=>unlocked[n]).length;
+  if(count < 3){
+    document.getElementById("puzzleMsg").textContent = "Combinaison refusée : lisez les trois rapports au préalable.";
+    toast("Pièces à conviction manquantes.");
+    return;
+  }
+  const attempt = puzzleSequence.map(x=>x.key).join("-");
+  if(attempt === "regard-force-mystere"){
     puzzleSolved = true;
-    seqWindow.textContent = "ACCÈS AUTORISÉ";
-    seqWindow.style.color = "#fff";
-    seqWindow.style.background = "var(--accent)";
-    document.getElementById("puzzleMsg").textContent = "Code correct. Le sceau a été brisé.";
-    
-    document.getElementById("statusPuzzle").classList.add("done");
-    document.getElementById("statusPuzzle").querySelector(".stamp").textContent = "RÉSOLU";
-    updateStatus();
-    
-    setTimeout(() => {
-      document.getElementById("secretDrawer").scrollIntoView();
-    }, 1000);
+    document.getElementById("puzzleMsg").textContent = "Dispositif débloqué ! La station 97.7 Moonlight est maintenant active.";
+    const sp = document.getElementById("statusPuzzle");
+    sp.classList.add("done");
+    sp.querySelector(".stamp").textContent = "OUVERT";
+    updateLockStatus();
+    checkUnlock(true);
   } else {
-    document.getElementById("puzzleMsg").textContent = "ERREUR : Séquence incorrecte.";
+    document.getElementById("puzzleMsg").textContent = "Erreur d'alignement. Vérifiez l'ordre logique (A → B → C).";
     puzzleSequence = [];
-    setTimeout(() => { if(!puzzleSolved) seqWindow.textContent = "EN ATTENTE D'ENTRÉE..."; }, 1000);
-    toast("Séquence rejetée.");
+    renderSequence();
+    toast("Mauvais code.");
   }
 }
 
-// --- RAIN CANVAS EFFECT ---
+function checkUnlock(fromPuzzle){
+  const reportsDone = unlocked[1] && unlocked[2] && unlocked[3];
+  if(reportsDone && !puzzleSolved){
+    document.getElementById("coffret").scrollIntoView();
+    if(fromPuzzle !== false) toast("Rapports d'enquêtes complets. Le coffre attend sa clé.");
+  }
+  if(reportsDone && puzzleSolved){
+    const sec = document.getElementById("secret");
+    if(sec.classList.contains("locked")){
+      sec.classList.remove("locked");
+      const moon = document.getElementById("moonStation");
+      moon.disabled = false;
+      moon.classList.remove("locked");
+      moon.textContent = "97.7 Moonlight";
+      const sf = document.getElementById("statusFinal");
+      sf.classList.add("done");
+      sf.querySelector(".stamp").textContent = "OUVERTE";
+      toast("Compartiment secret déverrouillé.");
+      setTimeout(()=>document.getElementById("final").scrollIntoView(), 600);
+    }
+  }
+}
+
+/* Pluie Ambiante (Allégée) */
 const rain = document.getElementById("rain");
 const rctx = rain.getContext("2d");
 let rw, rh, drops = [];
-function resizeRain() {
-  rw = rain.width = innerWidth;
-  rh = rain.height = innerHeight;
-  drops = Array.from({length: Math.floor(innerWidth/10)}, () => ({
-    x: Math.random()*rw, y: Math.random()*rh, l: 20+Math.random()*30, s: 8+Math.random()*10, a: 0.1+Math.random()*0.2
+function resizeRain(){
+  rw = rain.width = innerWidth * devicePixelRatio;
+  rh = rain.height = innerHeight * devicePixelRatio;
+  rain.style.width = innerWidth+"px"; rain.style.height = innerHeight+"px";
+  drops = Array.from({length: Math.min(90, Math.floor(innerWidth/14))}, () => ({
+    x: Math.random()*rw, y: Math.random()*rh, l: 15+Math.random()*30, s: 5+Math.random()*6, a: .03+Math.random()*.07
   }));
 }
-window.addEventListener("resize", resizeRain); 
-resizeRain();
-
-function drawRain() {
+addEventListener("resize", resizeRain); resizeRain();
+function drawRain(){
   rctx.clearRect(0,0,rw,rh);
-  rctx.strokeStyle = "rgba(255,255,255,0.15)";
-  rctx.lineWidth = 1;
-  drops.forEach(d => {
+  rctx.strokeStyle = "rgba(255,255,255,.07)";
+  rctx.lineWidth = devicePixelRatio;
+  drops.forEach(d=>{
     rctx.globalAlpha = d.a;
     rctx.beginPath();
-    rctx.moveTo(d.x, d.y);
-    rctx.lineTo(d.x + d.l*0.1, d.y + d.l);
+    rctx.moveTo(d.x,d.y);
+    rctx.lineTo(d.x+d.l*.08,d.y+d.l);
     rctx.stroke();
-    d.y += d.s;
-    d.x += d.s * 0.1;
-    if (d.y > rh) { d.y = -40; d.x = Math.random()*rw; }
+    d.y += d.s*devicePixelRatio;
+    d.x += .12*devicePixelRatio;
+    if(d.y > rh){ d.y = -40; d.x = Math.random()*rw; }
   });
+  rctx.globalAlpha = 1;
   requestAnimationFrame(drawRain);
 }
 drawRain();
+
+/* Canevas Toile d'Indices */
+const webCanvas = document.getElementById("webCanvas");
+const wctx = webCanvas.getContext("2d");
+let ww, wh, nodes = [];
+function resizeWeb(){
+  ww = webCanvas.width = innerWidth * devicePixelRatio;
+  wh = webCanvas.height = innerHeight * devicePixelRatio;
+  nodes = Array.from({length: 12}, () => ({
+    x: Math.random()*ww, y: Math.random()*wh, vx:(Math.random()-.5)*.08, vy:(Math.random()-.5)*.08
+  }));
+}
+addEventListener("resize", resizeWeb); resizeWeb();
+function drawWeb(){
+  wctx.clearRect(0,0,ww,wh);
+  for(const n of nodes){
+    n.x += n.vx*devicePixelRatio; n.y += n.vy*devicePixelRatio;
+    if(n.x<0||n.x>ww) n.vx*=-1;
+    if(n.y<0||n.y>wh) n.vy*=-1;
+  }
+  wctx.strokeStyle = "rgba(228,222,208,.03)";
+  wctx.lineWidth = devicePixelRatio;
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i], b=nodes[j];
+      const dist=Math.hypot(a.x-b.x,a.y-b.y);
+      if(dist < ww*.25){
+        wctx.globalAlpha = Math.max(0, .12 - dist/(ww*.25)*.12);
+        wctx.beginPath();
+        wctx.moveTo(a.x,a.y);
+        wctx.lineTo(b.x,b.y);
+        wctx.stroke();
+      }
+    }
+  }
+  wctx.globalAlpha=1;
+  requestAnimationFrame(drawWeb);
+}
+drawWeb();
+
+/* Oscilloscope Ambre/Rétro CRT */
+const scope = document.getElementById("scope");
+const sctx = scope.getContext("2d");
+function resizeScope(){
+  const rect = scope.parentElement.getBoundingClientRect();
+  scope.width = rect.width * devicePixelRatio;
+  scope.height = rect.height * devicePixelRatio;
+}
+addEventListener("resize", resizeScope); resizeScope();
+let st=0;
+function drawScope(){
+  const w=scope.width, h=scope.height;
+  sctx.clearRect(0,0,w,h);
+  sctx.strokeStyle="rgba(255,255,255,.03)";
+  sctx.lineWidth=devicePixelRatio;
+  for(let x=0;x<w;x+=32*devicePixelRatio){sctx.beginPath();sctx.moveTo(x,0);sctx.lineTo(x,h);sctx.stroke();}
+  for(let y=0;y<h;y+=20*devicePixelRatio){sctx.beginPath();sctx.moveTo(0,y);sctx.lineTo(w,y);sctx.stroke();}
+  
+  const playing = activeTrack && !activeTrack.paused;
+  let amp = playing ? 12 : 2;
+  if(currentTrack === "moon") amp = 22; 
+  if(currentTrack === "tacos") amp = 17;
+  if(currentTrack === "fallen") amp = 10;
+  
+  sctx.strokeStyle="rgba(223, 192, 117, 0.9)";
+  sctx.lineWidth=2*devicePixelRatio;
+  sctx.shadowBlur=6*devicePixelRatio;
+  sctx.shadowColor="rgba(223, 192, 117, 0.4)";
+  sctx.beginPath();
+  for(let x=0;x<w;x++){
+    const y = h/2 + Math.sin(x*.022 + st)*amp*devicePixelRatio + Math.sin(x*.055 + st*1.3)*amp*.22*devicePixelRatio + (Math.random()-.5)*2*devicePixelRatio;
+    if(x===0)sctx.moveTo(x,y); else sctx.lineTo(x,y);
+  }
+  sctx.stroke();
+  sctx.shadowBlur=0;
+  st += .07;
+  requestAnimationFrame(drawScope);
+}
+drawScope();
+
+/* Mots en lévitation (Arrière-plan) */
+const memoryWords = [
+  "unique","rare","belle","singulière","magnétique","précieuse","inoubliable","douce",
+  "intense","lumineuse","mystérieuse","irremplaçable","gracieuse","vraie","poétique",
+  "délicate","marquante","libre","profonde","étoile"
+];
+const wm = document.getElementById("wordMachine");
+function spawnWord(){
+  if(!wm) return;
+  const word = document.createElement("span");
+  word.className = "word";
+  word.textContent = memoryWords[Math.floor(Math.random()*memoryWords.length)];
+  word.style.left = (Math.random()*70+10)+"%";
+  word.style.bottom = "-35px";
+  word.style.fontSize = (Math.random()*1.5+1.1)+"rem";
+  word.style.animationDuration = (Math.random()*5+8)+"s";
+  word.style.opacity = Math.random()*.35+.35;
+  wm.appendChild(word);
+  setTimeout(()=>word.remove(), 13000);
+}
+function burstWords(){
+  for(let i=0;i<15;i++) setTimeout(spawnWord, i*130);
+}
+setInterval(spawnWord, 1300);
+
+function moonFlash(){
+  for(let i=0;i<20;i++) setTimeout(spawnWord, i*80);
+}
+
+/* Particules floues en arrière-plan */
+const memCanvas = document.getElementById("memoryCanvas");
+const mctx = memCanvas.getContext("2d");
+let mw, mh, particles = [];
+function resizeMem(){
+  mw=memCanvas.width=innerWidth*devicePixelRatio;
+  mh=memCanvas.height=innerHeight*devicePixelRatio;
+}
+addEventListener("resize", resizeMem); resizeMem();
+function drawMem(){
+  mctx.clearRect(0,0,mw,mh);
+  if(Math.random()<.03 && particles.length < 20){
+    particles.push({
+      text: memoryWords[Math.floor(Math.random()*memoryWords.length)],
+      x: Math.random()*mw,
+      y: mh + 30,
+      vy:(.15+Math.random()*.3)*devicePixelRatio,
+      a:0,
+      size:(12+Math.random()*14)*devicePixelRatio
+    });
+  }
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.y -= p.vy;
+    p.a = Math.min(.12, p.a + .003);
+    if (p.y < mh * 0.35) {
+      p.a -= .003;
+    }
+    mctx.font=`italic ${p.size}px Georgia, serif`;
+    mctx.fillStyle=`rgba(255,255,255,${Math.max(0, p.a)})`;
+    mctx.textAlign="center";
+    mctx.fillText(p.text,p.x,p.y);
+    
+    if(p.y < -40 || p.a <= 0){
+      particles.splice(i,1);
+    }
+  }
+  requestAnimationFrame(drawMem);
+}
+drawMem();
+updateLockStatus();
 </script>
 </body>
 </html>

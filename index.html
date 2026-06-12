@@ -169,7 +169,8 @@ a{color:inherit}
 
 @media(min-width: 1200px) {
   .layout {
-    margin-left: 2.5rem; /* Décale naturellement la mise en page vers la gauche */
+    margin-left: auto;
+    margin-right: auto; /* Garde le dossier parfaitement centré sur grand écran */
   }
 }
 
@@ -725,48 +726,71 @@ input[type="range"]::-webkit-slider-thumb{
 
 /* Machine Typographique (Mot Clé - Fumée de Mots) */
 .word-machine{
-  min-height:280px;
-  border:4px double rgba(255,255,255,0.12);
-  background:#050505;
+  min-height:320px;
+  border:4px double rgba(255,255,255,0.14);
+  background:
+    radial-gradient(circle at 50% 110%, rgba(255,255,255,.08), transparent 34%),
+    radial-gradient(circle at 25% 95%, rgba(255,255,255,.045), transparent 26%),
+    radial-gradient(circle at 72% 92%, rgba(255,255,255,.035), transparent 30%),
+    linear-gradient(180deg,#020202 0%,#070707 56%,#030303 100%);
   position:relative;
   overflow:hidden;
-  box-shadow:inset 0 0 20px rgba(0,0,0,.95);
+  isolation:isolate;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.98), 0 20px 60px rgba(0,0,0,.35);
+}
+.word-machine:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 34px),
+    linear-gradient(180deg, rgba(0,0,0,.75), transparent 28%, rgba(0,0,0,.85));
+  mix-blend-mode:screen;
+  opacity:.32;
+}
+.word-machine:after{
+  content:"";
+  position:absolute;
+  inset:-15% -10%;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 45% 88%, rgba(255,255,255,.075), transparent 34%),
+    radial-gradient(ellipse at 60% 100%, rgba(255,255,255,.045), transparent 42%);
+  filter:blur(18px);
+  opacity:.65;
+  animation:machineBreath 7s ease-in-out infinite;
+}
+@keyframes machineBreath{
+  0%,100%{transform:translateY(12px) scale(1);opacity:.45}
+  50%{transform:translateY(-8px) scale(1.03);opacity:.78}
 }
 .word-machine .word{
   position:absolute;
+  left:0;
+  top:0;
+  z-index:2;
   font-family:Georgia,serif;
   font-style:italic;
-  color:rgba(255,255,255,.45);
-  text-shadow:0 0 12px rgba(255,255,255,.1);
+  color:rgba(255,255,255,.72);
+  text-shadow:0 0 10px rgba(255,255,255,.18), 0 0 22px rgba(255,255,255,.08);
   white-space:nowrap;
-  animation:smokeRise linear forwards; /* Dérive de fumée */
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(0,0,0);
+  will-change:transform, opacity;
+  user-select:none;
 }
-
-/* Animation "Volutes de Fumée" */
-@keyframes smokeRise {
-  0% {
-    transform: translateY(115%) translateX(0) scale(0.85) rotate(0deg);
-    opacity: 0;
-    filter: blur(5px);
-  }
-  15% {
-    opacity: 0.65;
-    filter: blur(1px);
-  }
-  50% {
-    transform: translateY(25%) translateX(var(--drift-mid)) scale(1.02) rotate(var(--rot-mid));
-    opacity: 0.5;
-    filter: blur(2px);
-  }
-  75% {
-    opacity: 0.25;
-    filter: blur(4px);
-  }
-  100% {
-    transform: translateY(-120%) translateX(var(--drift-end)) scale(1.18) rotate(var(--rot-end));
-    opacity: 0;
-    filter: blur(8px);
-  }
+.word-machine .word.strong{
+  color:rgba(255,255,255,.9);
+  font-weight:700;
+  letter-spacing:.02em;
+}
+@media (prefers-reduced-motion: reduce){
+  .word-machine:after{animation:none}
+  .word-machine .word{transition:none!important;filter:none!important}
 }
 
 /* Coffret-Fort à Disques */
@@ -870,6 +894,23 @@ input[type="range"]::-webkit-slider-thumb{
   font-weight:bold;
   text-align:center;
   box-shadow:inset 0 0 4px rgba(255,255,255,.05), 1px 2px 3px rgba(0,0,0,0.5);
+}
+.chip.selected,
+.chip:disabled{
+  background:#e0e0e0;
+  color:#000;
+  border-color:#e0e0e0;
+  opacity:.88;
+  transform:none;
+  cursor:default;
+}
+.paper-btn:disabled,
+.ghost-btn:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+  transform:none!important;
+  background:transparent;
+  color:inherit;
 }
 .puzzle-actions{
   display:flex;
@@ -1659,13 +1700,13 @@ input[type="range"]::-webkit-slider-thumb{
                     Joyeux anniversaire. Je te l'écris doucement, comme on glisse une page dactylographiée sous la lampe de table, au coeur d'une nuit paisible qui n'a pas encore décidé si elle préférait pleurer ou sourire.
                   </p>
                   <p>
-                    Depuis quelque temps, nos chemins de voix divergent. Il y a eu la distance, le silence, cette étrange habitude de ne plus nous adresser la parole. Je ne viens pas repeindre le passé, ni lui prêter des parures qu'il ne possède pas. Je désire simplement poser ici ce qui reste vrai, loin des bruits et des rancunes stériles.
+                    Depuis quelque temps, nos chemins de voix divergent. Il y a eu la distance, le silence, cette étrange habitude de ne plus nous adresser la parole. Je ne viens pas repeindre le passé, ni demander une réponse, ni rouvrir ce qui doit rester posé. Je désire seulement laisser ici une pensée propre, tenue à la bonne distance, loin des bruits et des rancunes stériles.
                   </p>
                   <p>
-                    Tu es une personne singulière. Pas simplement belle. Belle serait trop réducteur, trop rapide, presque trop convenu. Tu disposes de cette présence qui s'écrit dans l'ombre des détails : une force tranquille dans le regard, une pudeur qui enveloppe tes doutes, une dignité qui survit aux moments compliqués. Tu possèdes l'art rare de marquer les mémoires bien après les derniers mots échangés.
+                    Tu es une personne singulière. Pas simplement belle. Belle serait trop réducteur, trop rapide, presque trop convenu. Tu disposes de cette présence qui s'écrit dans l'ombre des détails : une force tranquille dans le regard, une pudeur qui protège tes doutes, une dignité qui survit aux moments compliqués. Tu possèdes l'art rare de marquer les mémoires bien après les derniers mots échangés.
                   </p>
                   <p>
-                    Je t'ai aimée sincèrement. Et même si la vie nous a placés sur une page plus rude, je refuse que le jour de ton anniversaire porte la trace de ce qui nous a abîmés. Ce moment doit te trouver plus légère, plus tranquille, plus proche de ton propre équilibre.
+                    Je t'ai aimée sincèrement. Et même si la vie nous a placés sur une page plus rude, je refuse que ton anniversaire porte la trace de ce qui nous a abîmés. Ce message n'exige rien. Il choisit simplement la paix, le respect, et la reconnaissance de ce que tu as été pour moi.
                   </p>
                   <p>
                     Aussi, je te souhaite une année clémente. Une année qui t'offre la paix sans éteindre ta flamme. Une année pavée de matins clairs, de sommeils sereins, de choix inspirés, avec l'intime certitude que tu mérites d'être estimée avec patience, égard et bienveillance.
@@ -1810,35 +1851,63 @@ function updateCandleMode() {
   }
 }
 
-function playTrack(name, restart=true){
-  if(name === "moon" && document.getElementById("moonStation").disabled && !isModalOpen){
-    toast("La fréquence 97.7 est encore scellée.");
-    return;
-  }
-  // Pause fonctionnelle de l'ensemble des pistes actives avant de lancer la nouvelle
-  pauseAllAudio();
-  
-  activeTrack = audio[name];
-  currentTrack = name;
-  if(activeTrack){
-    activeTrack.volume = parseFloat(volume.value);
-    if(restart) activeTrack.currentTime = 0;
-    activeTrack.play()
-      .then(() => updateCandleMode())
-      .catch(()=>toast("Cliquez sur la page pour activer la radio."));
-  }
+function isMoonUnlocked(){
+  const moon = document.getElementById("moonStation");
+  return puzzleSolved || (moon && !moon.disabled);
 }
 
-function switchStation(btn, restart=true){
+function saveRadioState(){
+  savedRadioTrack = currentTrack || "tacos";
+  savedRadioTime = activeTrack && isFinite(activeTrack.currentTime) ? activeTrack.currentTime : 0;
+  savedRadioPlaying = !!(activeTrack && !activeTrack.paused);
+}
+
+function scrollToSection(id, block="start"){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:"smooth", block});
+}
+
+function playTrack(name, restart=true, options={}){
+  const allowLockedMoon = !!options.allowLockedMoon;
+  if(name === "moon" && !isMoonUnlocked() && !allowLockedMoon){
+    toast("La fréquence 97.7 est encore scellée.");
+    return false;
+  }
+
+  const nextTrack = audio[name];
+  if(!nextTrack){
+    toast("Piste introuvable.");
+    return false;
+  }
+
+  pauseAllAudio();
+  activeTrack = nextTrack;
+  currentTrack = name;
+  activeTrack.volume = parseFloat(volume.value);
+  if(restart) activeTrack.currentTime = 0;
+  activeTrack.play()
+    .then(() => updateCandleMode())
+    .catch(()=>toast("Cliquez sur la page pour activer la radio."));
+
+  if(window.wordSmoke) window.wordSmoke.setFrequency(name);
+  return true;
+}
+
+function switchStation(btn, restart=true, options={}){
   const track = btn.dataset.track;
-  playTrack(track, restart);
+  const navigate = options.navigate !== false;
+  const save = options.save !== false;
+  const ok = playTrack(track, restart, {allowLockedMoon: options.allowLockedMoon});
+  if(!ok) return false;
+
+  if(save) savedRadioTrack = track;
   updateRadioUIForTrack(track);
-  
+
   const note = document.getElementById("radioNote");
   if(track === "tacos") {
-    note.textContent = "La mélancolie de Raining Tacos Sad est active. Écoute fluide et enveloppante.";
+    note.textContent = "La mélancolie de Raining Tacos Sad est active. Les mots montent comme une fumée d'encre.";
     burstWords();
-    document.getElementById("souvenirs").scrollIntoView();
+    if(navigate) scrollToSection("souvenirs");
   }
   if(track === "pisces") {
     note.textContent = "La bande-son feutrée de Pisces prend le relais. Un flux lent, propice à l'introspection.";
@@ -1848,9 +1917,10 @@ function switchStation(btn, restart=true){
   }
   if(track === "moon") {
     note.textContent = "Moonlight Candles illumine le bureau d'une douce lueur intime.";
-    document.getElementById("final").scrollIntoView();
     moonFlash();
+    if(navigate) scrollToSection("final");
   }
+  return true;
 }
 
 function updateRadioUIForTrack(trackName) {
@@ -1867,26 +1937,18 @@ function updateRadioUIForTrack(trackName) {
 
 document.querySelectorAll(".station").forEach(btn => {
   btn.addEventListener("click", () => {
-    const track = btn.dataset.track;
-    if (track !== "moon" || !document.getElementById("moonStation").disabled) {
-      savedRadioTrack = track;
-    }
-    switchStation(btn, true);
+    switchStation(btn, true, {navigate:true, save:true});
   });
 });
 
-function switchStationByName(name, restart=true){
+function switchStationByName(name, restart=true, options={}){
   const btn = document.querySelector(`.station[data-track="${name}"]`);
-  if(btn) {
-    if (name !== "moon" || !document.getElementById("moonStation").disabled) {
-      savedRadioTrack = name;
-    }
-    switchStation(btn, restart);
-  }
+  if(!btn) return false;
+  return switchStation(btn, restart, options);
 }
 
 function startReelMode(){
-  switchStationByName("tacos", true);
+  switchStationByName("tacos", true, {navigate:true, save:true});
   toast("Mode lecture continue activé : boucle complète.");
 }
 
@@ -1965,43 +2027,38 @@ updateProgress();
 document.getElementById("startBtn").addEventListener("click", () => {
   document.getElementById("startScreen").style.display = "none";
   pauseAllAudio();
-  switchStationByName("tacos", true); // Default is Tacos Sad
+  switchStationByName("tacos", true, {navigate:false, save:true}); // Démarre la radio sans propulser la page vers le bas.
+  window.scrollTo({top:0, behavior:"smooth"});
   toast("Bureau des archives ouvert.");
 });
 
 // Évènements d'ouverture des documents (Polaroids)
+function setModalAudioButtons(activeName){
+  const fBtn = document.getElementById("modalFallenBtn");
+  const mBtn = document.getElementById("modalMoonBtn");
+  if(!fBtn || !mBtn) return;
+
+  fBtn.classList.toggle("active-toggle", activeName === "fallen");
+  mBtn.classList.toggle("active-toggle", activeName === "moon");
+  mBtn.disabled = !isMoonUnlocked();
+  mBtn.title = isMoonUnlocked() ? "Écouter Moonlight" : "Déverrouillez le coffret pour libérer Moonlight";
+}
+
 function openReport(num){
   const r = reports[num];
   document.getElementById("reportNumber").textContent = r.number;
   document.getElementById("reportTitle").textContent = r.title;
   document.getElementById("reportText").innerHTML = r.text;
   document.getElementById("modal").classList.add("active");
+
+  if(!isModalOpen) saveRadioState();
   isModalOpen = true;
 
-  // Sauvegarde immuable de l'état audio global externe
-  if (currentTrack !== "moon" && currentTrack !== "fallen") {
-    savedRadioTrack = currentTrack;
-    if (activeTrack) {
-      savedRadioTime = activeTrack.currentTime;
-      savedRadioPlaying = !activeTrack.paused;
-    } else {
-      savedRadioPlaying = false;
-    }
-  }
-
-  // Jouer la musique de la lune (Moonlight) par défaut à l'ouverture de la modal
-  playTrack("moon", true);
-  updateRadioUIForTrack("moon");
-
-  // Ajustement visuel des toggles de la modal
-  setTimeout(() => {
-    const fBtn = document.getElementById("modalFallenBtn");
-    const mBtn = document.getElementById("modalMoonBtn");
-    if(fBtn && mBtn) {
-      fBtn.classList.remove("active-toggle");
-      mBtn.classList.add("active-toggle");
-    }
-  }, 50);
+  // Logique narrative : Fallen accompagne les rapports; Moonlight reste une récompense scellée.
+  const modalTrack = isMoonUnlocked() ? "moon" : "fallen";
+  playTrack(modalTrack, true, {allowLockedMoon:false});
+  updateRadioUIForTrack(modalTrack);
+  setModalAudioButtons(modalTrack);
 
   unlocked[num] = true;
   const row = document.getElementById("status" + num);
@@ -2013,22 +2070,15 @@ function openReport(num){
 
 // Permutation audio isolée au sein de l'archive (Fallen / Moonlight)
 function toggleModalAudio(trackName) {
-  if (isModalOpen) {
-    pauseAllAudio();
-    playTrack(trackName, true);
+  if (!isModalOpen) return;
+  if(trackName === "moon" && !isMoonUnlocked()){
+    toast("Moonlight reste scellée jusqu'au coffret.");
+    setModalAudioButtons("fallen");
+    return;
+  }
+  if(playTrack(trackName, true, {allowLockedMoon:false})){
     updateRadioUIForTrack(trackName);
-
-    const fBtn = document.getElementById("modalFallenBtn");
-    const mBtn = document.getElementById("modalMoonBtn");
-    if(fBtn && mBtn) {
-      if (trackName === "fallen") {
-        fBtn.classList.add("active-toggle");
-        mBtn.classList.remove("active-toggle");
-      } else {
-        fBtn.classList.remove("active-toggle");
-        mBtn.classList.add("active-toggle");
-      }
-    }
+    setModalAudioButtons(trackName);
   }
 }
 
@@ -2036,20 +2086,20 @@ function closeReport(){
   document.getElementById("modal").classList.remove("active");
   isModalOpen = false;
 
-  // Arret total de toute piste interne à l'archive
   pauseAllAudio();
 
-  // Rétablissement propre de la radio globale externe sans distorsion
   currentTrack = savedRadioTrack || "tacos";
-  activeTrack = audio[currentTrack];
+  activeTrack = audio[currentTrack] || audio.tacos;
   if (activeTrack) {
-    activeTrack.currentTime = savedRadioTime;
+    activeTrack.currentTime = Math.min(savedRadioTime || 0, isFinite(activeTrack.duration) ? activeTrack.duration : savedRadioTime || 0);
     if (savedRadioPlaying) {
-      activeTrack.play().catch(err => console.log("Audio play interrupted on restore:", err));
+      activeTrack.play().then(updateCandleMode).catch(err => console.log("Audio play interrupted on restore:", err));
     } else {
       activeTrack.pause();
+      updateCandleMode();
     }
     updateRadioUIForTrack(currentTrack);
+    if(window.wordSmoke) window.wordSmoke.setFrequency(currentTrack);
   }
 }
 
@@ -2066,42 +2116,78 @@ function updateLockStatus(){
   document.getElementById("lockPuzzle").textContent = `Coffret : ${puzzleSolved ? "résolu" : "verrouillé"}`;
 }
 
+function setPuzzleChipsState(){
+  const selected = new Set(puzzleSequence.map(x => x.key));
+  document.querySelectorAll(".chip").forEach(btn => {
+    const isSelected = selected.has(btn.dataset.key);
+    btn.classList.toggle("selected", isSelected);
+    btn.disabled = puzzleSolved || isSelected;
+  });
+}
+
 document.querySelectorAll(".chip").forEach(btn => {
   btn.addEventListener("click", () => {
-    if(puzzleSequence.length >= 3) return;
-    puzzleSequence.push({key: btn.dataset.key, label: btn.textContent});
+    if(puzzleSolved) return;
+    if(puzzleSequence.length >= 3) {
+      toast("Trois disques seulement.");
+      return;
+    }
+    if(puzzleSequence.some(item => item.key === btn.dataset.key)) return;
+    puzzleSequence.push({key: btn.dataset.key, label: btn.textContent.trim()});
     renderSequence();
   });
 });
 
 function renderSequence(){
   const win = document.getElementById("sequenceWindow");
+  win.replaceChildren();
   if(puzzleSequence.length === 0){
-    win.innerHTML = "<em>Aucune entrée</em>";
+    const empty = document.createElement("em");
+    empty.textContent = "Aucune entrée";
+    win.appendChild(empty);
+    setPuzzleChipsState();
     return;
   }
-  win.innerHTML = puzzleSequence.map(item => `<span>${item.label}</span>`).join("");
+  puzzleSequence.forEach(item => {
+    const s = document.createElement("span");
+    s.textContent = item.label;
+    win.appendChild(s);
+  });
+  setPuzzleChipsState();
 }
 
 function resetPuzzle(){
+  if(puzzleSolved){
+    toast("Coffret déjà ouvert.");
+    return;
+  }
   puzzleSequence = [];
   renderSequence();
   document.getElementById("puzzleMsg").textContent = "Combinaison effacée. Relisez les pièces d'enquête.";
 }
 
 function checkPuzzle(){
+  if(puzzleSolved){
+    toast("Coffret déjà ouvert.");
+    return;
+  }
   const count = [1,2,3].filter(n=>unlocked[n]).length;
   if(count < 3){
     document.getElementById("puzzleMsg").textContent = "Combinaison refusée : lisez les trois rapports au préalable.";
     toast("Pièces à conviction manquantes.");
     return;
   }
+  if(puzzleSequence.length !== 3){
+    document.getElementById("puzzleMsg").textContent = "Le coffret attend trois disques : Regard, Force, Mystère.";
+    toast("Combinaison incomplète.");
+    return;
+  }
   const attempt = puzzleSequence.map(x=>x.key).join("-");
   if(attempt === "regard-force-mystere"){
     puzzleSolved = true;
     document.getElementById("puzzleMsg").textContent = "Dispositif débloqué ! La station 97.7 Moonlight est maintenant active.";
-    
-    // Déclenchement visuel de la dislocation du miroir brisé
+    setPuzzleChipsState();
+
     const overlay = document.getElementById("shatteredOverlay");
     if (overlay) overlay.classList.add("shattering-away");
 
@@ -2111,7 +2197,7 @@ function checkPuzzle(){
     updateLockStatus();
     checkUnlock(true);
   } else {
-    document.getElementById("puzzleMsg").textContent = "Erreur d'alignement. Vérifiez l'ordre logique (A → B → C).";
+    document.getElementById("puzzleMsg").textContent = "Erreur d'alignement. L'ordre narratif est : ce qui observe, ce qui tient droit, puis ce qui résiste à l'explication.";
     puzzleSequence = [];
     renderSequence();
     toast("Mauvais code.");
@@ -2120,14 +2206,12 @@ function checkPuzzle(){
 
 function checkUnlock(fromPuzzle){
   const reportsDone = unlocked[1] && unlocked[2] && unlocked[3];
-  if(reportsDone && !puzzleSolved){
-    document.getElementById("coffret").scrollIntoView();
-    if(fromPuzzle !== false) toast("Rapports d'enquêtes complets. Le coffre attend sa clé.");
+  if(reportsDone && !puzzleSolved && fromPuzzle !== false){
+    toast("Rapports complets. Le coffret attend sa clé.");
   }
   if(reportsDone && puzzleSolved){
     const sec = document.getElementById("secret");
     if(sec.classList.contains("locked")){
-      // On temporise la levée finale du verrou pour laisser l'animation du miroir brisé s'achever
       setTimeout(() => {
         sec.classList.remove("locked");
         const moon = document.getElementById("moonStation");
@@ -2136,17 +2220,20 @@ function checkUnlock(fromPuzzle){
           moon.classList.remove("locked");
           moon.textContent = "97.7 Moonlight";
         }
+        setModalAudioButtons(currentTrack);
         const sf = document.getElementById("statusFinal");
         if (sf) {
           sf.classList.add("done");
           sf.querySelector(".stamp").textContent = "OUVERTE";
         }
         toast("Compartiment secret déverrouillé.");
-        document.getElementById("final").scrollIntoView();
-      }, 1200); // Synchronisé avec la durée de glassBurst
+        scrollToSection("final");
+      }, 1200);
     }
   }
 }
+
+renderSequence();
 
 /* Pluie Ambiante (Allégée) */
 const rain = document.getElementById("rain");
@@ -2265,39 +2352,147 @@ const memoryWords = [
   "intense","lumineuse","mystérieuse","irremplaçable","gracieuse","vraie","poétique",
   "délicate","marquante","libre","profonde","étoile"
 ];
+
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+class WordSmokeSystem {
+  constructor(container, words){
+    this.container = container;
+    this.words = words;
+    this.particles = [];
+    this.lastTime = 0;
+    this.spawnAccumulator = 0;
+    this.running = false;
+    this.visible = true;
+    this.track = "tacos";
+    this.config = {rate: 4.5, speedMin: 34, speedMax: 76, max: 34};
+
+    if("IntersectionObserver" in window && container){
+      this.observer = new IntersectionObserver(entries => {
+        this.visible = entries.some(entry => entry.isIntersecting);
+      }, {threshold: .05});
+      this.observer.observe(container);
+    }
+  }
+
+  setFrequency(track){
+    this.track = track || "tacos";
+    const presets = {
+      tacos:  {rate: 6.2, speedMin: 46, speedMax: 98, max: 44},
+      pisces: {rate: 3.4, speedMin: 28, speedMax: 62, max: 30},
+      fallen: {rate: 2.4, speedMin: 24, speedMax: 48, max: 24},
+      moon:   {rate: 7.8, speedMin: 38, speedMax: 88, max: 52}
+    };
+    this.config = presets[this.track] || presets.tacos;
+  }
+
+  start(){
+    if(!this.container || prefersReducedMotion || this.running) return;
+    this.running = true;
+    this.lastTime = performance.now();
+    requestAnimationFrame(this.frame.bind(this));
+  }
+
+  frame(now){
+    if(!this.running) return;
+    const dt = Math.min(0.05, (now - this.lastTime) / 1000 || 0.016);
+    this.lastTime = now;
+
+    if(this.visible){
+      this.spawnAccumulator += dt * this.config.rate;
+      while(this.spawnAccumulator >= 1){
+        this.spawn();
+        this.spawnAccumulator -= 1;
+      }
+    }
+
+    this.update(dt);
+    requestAnimationFrame(this.frame.bind(this));
+  }
+
+  spawn(forceStrong=false){
+    if(!this.container || this.particles.length >= this.config.max) return;
+    const rect = this.container.getBoundingClientRect();
+    const w = Math.max(1, rect.width);
+    const h = Math.max(1, rect.height);
+    const el = document.createElement("span");
+    el.className = forceStrong || Math.random() > .72 ? "word strong" : "word";
+    el.textContent = this.words[Math.floor(Math.random() * this.words.length)];
+    el.style.fontSize = (Math.random() * 1.05 + .95).toFixed(2) + "rem";
+    this.container.appendChild(el);
+
+    const life = Math.random() * 3.5 + 6.5;
+    const speed = this.config.speedMin + Math.random() * (this.config.speedMax - this.config.speedMin);
+    const p = {
+      el,
+      age: 0,
+      life,
+      baseX: w * (.10 + Math.random() * .80),
+      startY: h + 34 + Math.random() * 45,
+      rise: h + 125 + Math.random() * 120,
+      speed,
+      amp: 14 + Math.random() * 42,
+      phase: Math.random() * Math.PI * 2,
+      wave: .75 + Math.random() * 1.45,
+      drift: (Math.random() - .5) * 26,
+      scale: .72 + Math.random() * .45,
+      rot: (Math.random() - .5) * 18,
+      opacity: .46 + Math.random() * .38
+    };
+    this.particles.push(p);
+  }
+
+  burst(count=16){
+    if(prefersReducedMotion) return;
+    this.start();
+    for(let i=0;i<count;i++){
+      setTimeout(() => this.spawn(i % 4 === 0), i * 65);
+    }
+  }
+
+  update(dt){
+    for(let i=this.particles.length - 1; i>=0; i--){
+      const p = this.particles[i];
+      p.age += dt;
+      const t = Math.min(1, p.age / p.life);
+      const smooth = 1 - Math.pow(1 - t, 1.65);
+      const x = p.baseX + Math.sin(p.phase + p.age * p.wave * 2.2) * p.amp + p.drift * p.age;
+      const y = p.startY - p.rise * smooth - p.speed * p.age * .22;
+      const fadeIn = Math.min(1, t / .14);
+      const fadeOut = Math.min(1, (1 - t) / .28);
+      const opacity = Math.max(0, p.opacity * Math.min(fadeIn, fadeOut));
+      const scale = p.scale + t * .55;
+      const rotate = p.rot + Math.sin(p.age * 1.1 + p.phase) * 5;
+      const blur = Math.max(0, (1 - Math.min(fadeIn, fadeOut)) * 5 + t * 1.4);
+
+      p.el.style.opacity = opacity.toFixed(3);
+      p.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)}) rotate(${rotate.toFixed(1)}deg)`;
+      p.el.style.filter = `blur(${blur.toFixed(2)}px)`;
+
+      if(t >= 1 || y < -90){
+        p.el.remove();
+        this.particles.splice(i,1);
+      }
+    }
+  }
+}
+
 const wm = document.getElementById("wordMachine");
-function spawnWord(){
-  if(!wm) return;
-  const word = document.createElement("span");
-  word.className = "word";
-  word.textContent = memoryWords[Math.floor(Math.random()*memoryWords.length)];
-  word.style.left = (Math.random()*65+15)+"%";
-  word.style.bottom = "-35px";
-  word.style.fontSize = (Math.random()*1.3+0.95)+"rem";
-  word.style.animationDuration = (Math.random()*4+7)+"s";
-  word.style.opacity = Math.random()*.3+.25;
-
-  // Calculs dynamiques de dérive horizontale pour simuler un mouvement de fumée
-  const driftMid = (Math.random() * 40 - 20) + "px";
-  const driftEnd = (Math.random() * 100 - 50) + "px";
-  const rotMid = (Math.random() * 12 - 6) + "deg";
-  const rotEnd = (Math.random() * 30 - 15) + "deg";
-  
-  word.style.setProperty('--drift-mid', driftMid);
-  word.style.setProperty('--drift-end', driftEnd);
-  word.style.setProperty('--rot-mid', rotMid);
-  word.style.setProperty('--rot-end', rotEnd);
-
-  wm.appendChild(word);
-  setTimeout(()=>word.remove(), 11000);
+window.wordSmoke = wm ? new WordSmokeSystem(wm, memoryWords) : null;
+if(window.wordSmoke){
+  window.wordSmoke.start();
+  window.wordSmoke.burst(10);
 }
+
 function burstWords(){
-  for(let i=0;i<12;i++) setTimeout(spawnWord, i*130);
+  if(window.wordSmoke) window.wordSmoke.burst(18);
 }
-setInterval(spawnWord, 1400);
 
 function moonFlash(){
-  for(let i=0;i<15;i++) setTimeout(spawnWord, i*80);
+  if(window.wordSmoke){
+    window.wordSmoke.setFrequency("moon");
+    window.wordSmoke.burst(24);
+  }
 }
 
 /* Particules floues en arrière-plan */
@@ -2307,33 +2502,42 @@ let mw, mh, particles = [];
 function resizeMem(){
   mw=memCanvas.width=innerWidth*devicePixelRatio;
   mh=memCanvas.height=innerHeight*devicePixelRatio;
+  memCanvas.style.width = innerWidth+"px";
+  memCanvas.style.height = innerHeight+"px";
 }
 addEventListener("resize", resizeMem); resizeMem();
-function drawMem(){
+let lastMemTime = performance.now();
+function drawMem(now=performance.now()){
+  const dt = Math.min(0.05, (now - lastMemTime) / 1000 || 0.016);
+  lastMemTime = now;
   mctx.clearRect(0,0,mw,mh);
-  if(Math.random()<.025 && particles.length < 15){
+  if(!prefersReducedMotion && Math.random()<.04 && particles.length < 22){
     particles.push({
       text: memoryWords[Math.floor(Math.random()*memoryWords.length)],
       x: Math.random()*mw,
-      y: mh + 30,
-      vy:(.15+Math.random()*.25)*devicePixelRatio,
+      y: mh + 50,
+      vx:(Math.random()-.5)*18*devicePixelRatio,
+      vy:(18+Math.random()*36)*devicePixelRatio,
       a:0,
-      size:(11+Math.random()*12)*devicePixelRatio
+      life: 7 + Math.random()*7,
+      age: 0,
+      size:(12+Math.random()*15)*devicePixelRatio
     });
   }
   for(let i=particles.length-1;i>=0;i--){
     const p=particles[i];
-    p.y -= p.vy;
-    p.a = Math.min(.1, p.a + .003);
-    if (p.y < mh * 0.35) {
-      p.a -= .003;
-    }
+    p.age += dt;
+    p.y -= p.vy * dt;
+    p.x += (p.vx * dt) + Math.sin(p.age * 1.1) * .16 * devicePixelRatio;
+    const t = p.age / p.life;
+    const fadeIn = Math.min(1, t / .18);
+    const fadeOut = Math.min(1, (1 - t) / .35);
+    p.a = Math.max(0, .12 * Math.min(fadeIn, fadeOut));
     mctx.font=`italic ${p.size}px Georgia, serif`;
-    mctx.fillStyle=`rgba(255,255,255,${Math.max(0, p.a)})`;
+    mctx.fillStyle=`rgba(255,255,255,${p.a})`;
     mctx.textAlign="center";
     mctx.fillText(p.text,p.x,p.y);
-    
-    if(p.y < -40 || p.a <= 0){
+    if(p.y < -80 || p.age > p.life){
       particles.splice(i,1);
     }
   }
@@ -2347,6 +2551,18 @@ if (mCanvas) {
   const mistCtx = mCanvas.getContext("2d");
   let mistW, mistH;
   let mistParticles = [];
+
+  function makeMistParticle(resetFromBottom=false){
+    return {
+      x: Math.random() * mistW,
+      y: resetFromBottom ? mistH + Math.random() * 50 : Math.random() * mistH,
+      r: 26 + Math.random() * 58,
+      vx: (Math.random() - 0.5) * 12 * devicePixelRatio,
+      vy: (22 + Math.random() * 52) * devicePixelRatio,
+      grow: (10 + Math.random() * 18) * devicePixelRatio,
+      alpha: 0.045 + Math.random() * 0.11
+    };
+  }
   
   function resizeMistCanvas() {
     const rect = mCanvas.parentElement.getBoundingClientRect();
@@ -2354,44 +2570,34 @@ if (mCanvas) {
     mistH = mCanvas.height = rect.height * devicePixelRatio;
     mCanvas.style.width = rect.width + "px";
     mCanvas.style.height = rect.height + "px";
+    mistParticles = Array.from({length: 28}, () => makeMistParticle(false));
   }
   
   resizeMistCanvas();
+  let lastMist = performance.now();
   
-  for (let i = 0; i < 22; i++) {
-    mistParticles.push({
-      x: Math.random() * mistW,
-      y: Math.random() * mistH,
-      r: 30 + Math.random() * 50,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: - (0.4 + Math.random() * 0.9), // Mouvement strictement ascendant
-      alpha: 0.05 + Math.random() * 0.12
-    });
-  }
-  
-  function drawMist() {
+  function drawMist(now=performance.now()) {
     if (!mistCtx) return;
+    const dt = Math.min(0.05, (now - lastMist) / 1000 || 0.016);
+    lastMist = now;
     mistCtx.clearRect(0, 0, mistW, mistH);
     
-    mistParticles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.r += 0.25; // Expansion de la brume en s'elevant
+    mistParticles.forEach((p, idx) => {
+      p.x += p.vx * dt;
+      p.y -= p.vy * dt;
+      p.r += p.grow * dt;
       
-      let heightPct = p.y / mistH;
-      let currentAlpha = p.alpha * heightPct; // Estompement progressif vers le haut
-      if (currentAlpha < 0) currentAlpha = 0;
+      const heightPct = Math.max(0, Math.min(1, p.y / mistH));
+      const currentAlpha = p.alpha * heightPct;
       
-      if (p.y + p.r < 0 || p.r > 220) {
-        p.y = mistH + Math.random() * 30;
-        p.x = Math.random() * mistW;
-        p.r = 20 + Math.random() * 40;
-        p.alpha = 0.05 + Math.random() * 0.12;
+      if (p.y + p.r < 0 || p.r > 240 * devicePixelRatio || p.x < -p.r || p.x > mistW + p.r) {
+        mistParticles[idx] = makeMistParticle(true);
+        p = mistParticles[idx];
       }
       
-      let grad = mistCtx.createRadialGradient(p.x, p.y, 5, p.x, p.y, p.r);
-      grad.addColorStop(0, `rgba(10, 10, 10, ${currentAlpha})`);
-      grad.addColorStop(0.5, `rgba(20, 20, 20, ${currentAlpha * 0.4})`);
+      const grad = mistCtx.createRadialGradient(p.x, p.y, 5, p.x, p.y, p.r);
+      grad.addColorStop(0, `rgba(18, 18, 18, ${currentAlpha})`);
+      grad.addColorStop(0.52, `rgba(30, 30, 30, ${currentAlpha * 0.42})`);
       grad.addColorStop(1, "rgba(0, 0, 0, 0)");
       
       mistCtx.fillStyle = grad;

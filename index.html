@@ -6,27 +6,27 @@
 <title>Dossier Pisces Noir — Bureau des Archives</title>
 <style>
 :root{
-  --paper:#f4ebd4;         /* Teinte papier journal vieilli */
-  --paper-dark:#dbd2b8;    /* Ombrages des documents imprimés */
-  --paper-text:#1a1a1a;    /* Encre noire d'imprimerie */
-  --ink:#e6decb;           /* Texte clair thématique sombre */
-  --muted:#999285;         /* Teintes secondaires atténuées */
+  --paper:#e0e0e0;         /* Teinte gris-blanc papier journal classique */
+  --paper-dark:#bcbcbc;    /* Gris d'ombrage d'imprimerie */
+  --paper-text:#000000;    /* Encre noire d'imprimerie */
+  --ink:#f0f0f0;           /* Texte clair thématique sombre */
+  --muted:#777777;         /* Éléments secondaires atténués */
   --deep:#050505;          /* Fond général */
-  --black:#000;
-  --soft:#0e0e0e;
-  --line:rgba(230,222,203,0.12);
-  --line-dark:rgba(26,26,26,0.15);
-  --gold:#d0ab56;          /* Or vintage / lueur bougie */
-  --shadow:0 25px 60px rgba(0,0,0,.8);
-  --max:1140px;            /* Contraint pour éviter les étirements excessifs */
+  --black:#000000;
+  --soft:#0a0a0a;
+  --line:rgba(255,255,255,0.08);
+  --line-dark:rgba(0,0,0,0.15);
+  --silver:#d5d5d5;        /* Argent métallique remplaçant le doré */
+  --shadow:0 25px 60px rgba(0,0,0,.9);
+  --max:1100px;            /* Contraint pour éviter les étirements horizontaux */
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   margin:0;
   background:
-    radial-gradient(circle at 5% 5%,rgba(255,255,255,.04),transparent 20rem),
-    radial-gradient(circle at 95% 15%,rgba(255,255,255,.01),transparent 25rem),
+    radial-gradient(circle at 10% 5%,rgba(255,255,255,.03),transparent 20rem),
+    radial-gradient(circle at 90% 15%,rgba(255,255,255,.01),transparent 25rem),
     linear-gradient(115deg,#000 0%,#080808 45%,#030303 100%);
   color:var(--ink);
   font-family: Georgia, "Times New Roman", serif;
@@ -55,19 +55,6 @@ body:after{
   pointer-events:none;
   z-index:80;
   transition: opacity 1s ease-in-out;
-}
-
-/* Lueur de bougie enveloppante */
-@keyframes candleFlicker {
-  0% { box-shadow: inset 0 0 60px rgba(208, 171, 86, 0.1); }
-  33% { box-shadow: inset 0 0 90px rgba(208, 171, 86, 0.22); }
-  66% { box-shadow: inset 0 0 75px rgba(208, 171, 86, 0.15); }
-  100% { box-shadow: inset 0 0 60px rgba(208, 171, 86, 0.1); }
-}
-body.candle-mode::after {
-  animation: candleFlicker 2.6s infinite ease-in-out;
-  box-shadow: inset 0 0 80px rgba(208, 171, 86, 0.18);
-  pointer-events: none;
 }
 
 button{font:inherit; background:none; border:none; outline:none; padding:0}
@@ -113,7 +100,7 @@ a{color:inherit}
   text-transform:uppercase;
   font-family:"Courier New", monospace;
   font-size:.68rem;
-  color:var(--gold);
+  color:var(--silver);
   margin-bottom:1.2rem;
 }
 .start-card h1{
@@ -133,7 +120,7 @@ a{color:inherit}
   font-size:.92rem;
 }
 
-/* Typographie & Boutons de Style */
+/* Boutons & Éléments Typographiques */
 .primary-btn,.ghost-btn,.station,.paper-btn,.chip,.dial-btn{
   cursor:pointer;
   border:1px solid rgba(255,255,255,.18);
@@ -176,11 +163,18 @@ a{color:inherit}
   width:min(var(--max),100%);
   margin:0 auto;
   display:grid;
-  grid-template-columns:280px minmax(0,1fr);
+  grid-template-columns:270px minmax(0,1fr);
   gap:clamp(1rem,2vw,1.5rem);
 }
+
+@media(min-width: 1200px) {
+  .layout {
+    margin-left: 2.5rem; /* Décale naturellement la mise en page vers la gauche */
+  }
+}
+
 @media(max-width:980px){
-  .layout{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr; margin-left: 0!important;}
   .left-panel{position:static!important}
 }
 .left-panel{
@@ -226,7 +220,7 @@ a{color:inherit}
 .stamp{
   border:1.5px solid rgba(255,255,255,.12);
   color:#444;
-  padding:.1rem .3rem;
+  padding:.1rem .35rem;
   font-weight:bold;
   transform:rotate(-2deg);
   display:inline-block;
@@ -235,8 +229,8 @@ a{color:inherit}
   font-size:.6rem;
 }
 .mini-row.done .stamp{
-  color:var(--gold);
-  border-color:var(--gold);
+  color:var(--silver);
+  border-color:var(--silver);
   opacity:1;
   transform:rotate(-4deg) scale(1.02);
 }
@@ -264,7 +258,7 @@ a{color:inherit}
   font-family:"Courier New", monospace;
   font-size:1.25rem;
   letter-spacing:.05em;
-  color:var(--gold);
+  color:var(--silver);
   font-weight:bold;
 }
 .station-name{
@@ -298,9 +292,9 @@ a{color:inherit}
   text-align:center;
 }
 .station.active{
-  background:#e6decb;
+  background:#e0e0e0;
   color:#000;
-  border-color:#e6decb;
+  border-color:#e0e0e0;
 }
 .station.locked{
   opacity:.25;
@@ -338,7 +332,7 @@ input[type="range"]::-webkit-slider-thumb{
   width:9px;
   height:9px;
   border-radius:50%;
-  background:var(--gold);
+  background:var(--silver);
   border:1px solid #000;
   cursor:pointer;
 }
@@ -353,7 +347,7 @@ input[type="range"]::-webkit-slider-thumb{
 .progress-fill{
   height:100%;
   width:0%;
-  background:#e6decb;
+  background:#e0e0e0;
   transition:width .15s linear;
 }
 .timecode{
@@ -474,7 +468,7 @@ input[type="range"]::-webkit-slider-thumb{
   font-family:"Courier New", monospace;
   text-transform:uppercase;
   letter-spacing:.25em;
-  color:var(--gold);
+  color:var(--silver);
   font-size:.72rem;
   margin-bottom:.8rem;
 }
@@ -554,7 +548,7 @@ input[type="range"]::-webkit-slider-thumb{
 }
 .thread-area{
   position:relative;
-  min-height:440px;
+  min-height:480px;
 }
 .thread-svg{
   position:absolute;
@@ -611,7 +605,7 @@ input[type="range"]::-webkit-slider-thumb{
 .photo-paper:before{
   content:"";
   position:absolute;
-  background:rgba(225,225,225,.18);
+  background:rgba(255,255,255,.18);
   width:60px;
   height:18px;
   transform:rotate(-12deg);
@@ -682,7 +676,7 @@ input[type="range"]::-webkit-slider-thumb{
   letter-spacing:.15em;
   font-size:.68rem;
   margin-bottom:.3rem;
-  color:var(--gold);
+  color:var(--silver);
 }
 .clue p{margin:0;color:#9e9e9e;line-height:1.45;font-size:.82rem}
 
@@ -745,7 +739,7 @@ input[type="range"]::-webkit-slider-thumb{
   color:rgba(255,255,255,.45);
   text-shadow:0 0 12px rgba(255,255,255,.1);
   white-space:nowrap;
-  animation:smokeRise linear forwards; /* Utilisation de la dérive de fumée */
+  animation:smokeRise linear forwards; /* Dérive de fumée */
 }
 
 /* Animation "Volutes de Fumée" */
@@ -791,8 +785,8 @@ input[type="range"]::-webkit-slider-thumb{
 .puzzle-paper{
   background:var(--paper);
   color:var(--paper-text);
-  padding:1rem;
-  min-height:290px;
+  padding:1.2rem;
+  min-height:310px;
   box-shadow:0 10px 25px rgba(0,0,0,.5);
   transform:rotate(-.5deg);
   position:relative;
@@ -903,13 +897,13 @@ input[type="range"]::-webkit-slider-thumb{
 .dial .dial-value{
   font-size:1rem;
   font-family:"Courier New", monospace;
-  color:var(--gold);
+  color:var(--silver);
 }
 .dial-btn{
   margin-top:.4rem;
   padding:.35rem;
   width:100%;
-  font-size:.6rem;
+  font-size:.62rem;
 }
 .puzzle-msg{
   color:#a0a0a0;
@@ -930,17 +924,19 @@ input[type="range"]::-webkit-slider-thumb{
 .secret.locked .secret-body{display:none}
 
 .lock-cover{
-  padding:clamp(1.5rem,4vw,3.5rem);
-  display:grid;
-  place-items:center;
+  padding:clamp(1.5rem, 4vw, 3.5rem);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
   text-align:center;
-  min-height:340px;
+  min-height:360px;
   position:relative;
   background: linear-gradient(180deg, rgba(255,255,255,.01), transparent);
 }
 .secret:not(.locked) .lock-cover{display:none}
 
-/* Canevas de brume obscure procedural */
+/* Canevas de brume obscure ascendante */
 #mistCanvas {
   position: absolute;
   inset: 0;
@@ -948,7 +944,7 @@ input[type="range"]::-webkit-slider-thumb{
   height: 100%;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.65;
+  opacity: 0.7;
 }
 
 /* Superposition Miroir Brisé */
@@ -979,7 +975,7 @@ input[type="range"]::-webkit-slider-thumb{
   font-family: Georgia, serif;
   font-style: italic;
   font-size: 1.1rem;
-  color: rgba(208, 171, 86, 0.45);
+  color: rgba(255, 255, 255, 0.35);
   text-transform: uppercase;
   letter-spacing: 0.15em;
   filter: blur(1.5px);
@@ -991,9 +987,9 @@ input[type="range"]::-webkit-slider-thumb{
   50% { opacity: 0.65; transform: scale(1.05); filter: blur(0.5px); }
 }
 
-/* Transition de dislocation du miroir lors de la validation */
+/* Animation de dislocation du miroir brisé */
 .shattered-overlay.shattering-away {
-  animation: glassBurst 1.5s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: glassBurst 1.2s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 @keyframes glassBurst {
   0% {
@@ -1002,25 +998,25 @@ input[type="range"]::-webkit-slider-thumb{
     filter: blur(0px);
   }
   30% {
-    opacity: 0.9;
-    transform: scale(1.02) rotate(0.5deg);
-    filter: blur(2px);
+    opacity: 0.95;
+    transform: scale(1.03) rotate(0.5deg);
+    filter: blur(1px);
   }
   100% {
     opacity: 0;
-    transform: scale(1.25) translateY(90px);
+    transform: scale(1.3) translateY(90px);
     filter: blur(15px);
     visibility: hidden;
   }
 }
 
-/* Lock Icon (Inline SVG) */
+/* Verrou en SVG épuré (Parfaitement centré) */
 .lock-icon-wrap {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 1.2rem;
-  color: var(--gold);
-  filter: drop-shadow(0 0 6px rgba(208, 171, 86, 0.35));
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 1.2rem; /* Centrage absolu */
+  color: var(--ink);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.25));
   z-index: 10;
   position: relative;
 }
@@ -1036,7 +1032,7 @@ input[type="range"]::-webkit-slider-thumb{
 
 .lock-cover h2, .lock-cover p, .lock-status {
   position: relative;
-  z-index: 10; /* Assure d'être au-dessus de la brume */
+  z-index: 10; /* Au-dessus de la brume */
 }
 
 .lock-cover h2{
@@ -1056,8 +1052,9 @@ input[type="range"]::-webkit-slider-thumb{
   display:grid;
   grid-template-columns:repeat(2, minmax(130px,1fr));
   gap:.6rem;
-  margin-top:1.2rem;
+  margin:1.2rem auto 0;
   max-width:440px;
+  justify-content: center;
 }
 @media(max-width:560px){.lock-status{grid-template-columns:1fr}}
 .lock-status div{
@@ -1104,7 +1101,7 @@ input[type="range"]::-webkit-slider-thumb{
   left:1rem;
   font-family:"Courier New", monospace;
   letter-spacing:.2em;
-  color:var(--gold);
+  color:var(--silver);
   font-size:.72rem;
 }
 
@@ -1409,6 +1406,7 @@ input[type="range"]::-webkit-slider-thumb{
     </aside>
 
     <main>
+      <!-- En-tête vintage style grand journal -->
       <header class="newspaper-masthead">
         <div class="masthead-top">
           <div>BULLETIN SPÉCIAL D'ANNIVERSAIRE</div>
@@ -1600,8 +1598,8 @@ input[type="range"]::-webkit-slider-thumb{
           <p>Dès que les indices sont analysés et le coffret décodé, le compartiment s'ouvrira.</p>
         </div>
         <div class="secret locked" id="secret">
-          <div class="lock-cover">
-            <!-- Canevas de brume obscure -->
+          <div class="lock-cover" id="lockCover">
+            <!-- Canevas de brume obscure ascendante -->
             <canvas id="mistCanvas"></canvas>
 
             <!-- Superposition Miroir Brisé -->
@@ -1636,7 +1634,7 @@ input[type="range"]::-webkit-slider-thumb{
             </div>
 
             <div>
-              <!-- Lock SVG épuré -->
+              <!-- Lock SVG épuré (Parfaitement centré) -->
               <div class="lock-icon-wrap">
                 <svg class="lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke-dasharray="none"></rect>
@@ -1782,10 +1780,14 @@ let isModalOpen = false;
 const playlistSequence = ["tacos", "pisces", "fallen", "moon"];
 const volume = document.getElementById("volume");
 
+// Configuration fonctionnelle de l'audio (Zéro chevauchement)
+const pauseTrack = track => track.pause();
+const pauseAllAudio = () => Object.values(audio).forEach(pauseTrack);
+
 // Configuration initiale
 Object.values(audio).forEach(a => {
   a.volume = parseFloat(volume.value);
-  a.loop = false; // Playlist unifiée gérée par JS pour éliminer les chevauchements
+  a.loop = false; // Playlist unifiée gérée par JS
 });
 
 volume.addEventListener("input", () => {
@@ -1809,14 +1811,13 @@ function updateCandleMode() {
 }
 
 function playTrack(name, restart=true){
-  // Permet de lire "moon" dans la modal même si la station n'est pas encore décodée globalement
   if(name === "moon" && document.getElementById("moonStation").disabled && !isModalOpen){
     toast("La fréquence 97.7 est encore scellée.");
     return;
   }
-  Object.entries(audio).forEach(([key,a]) => {
-    if(key !== name){ a.pause(); }
-  });
+  // Pause fonctionnelle de l'ensemble des pistes actives avant de lancer la nouvelle
+  pauseAllAudio();
+  
   activeTrack = audio[name];
   currentTrack = name;
   if(activeTrack){
@@ -1905,7 +1906,6 @@ Object.entries(audio).forEach(([key,a]) => {
   a.addEventListener("pause", () => updateCandleMode());
   
   a.addEventListener("ended", () => {
-    // Si l'archive est ouverte, on reboucle en sourdine le morceau sélectionné dans l'archive
     if (isModalOpen) {
       a.currentTime = 0;
       a.play().catch(()=>{});
@@ -1919,7 +1919,7 @@ Object.entries(audio).forEach(([key,a]) => {
     if (nextTrackName === "moon") {
       const isMoonUnlocked = !document.getElementById("moonStation").disabled;
       if (!isMoonUnlocked) {
-        nextTrackName = "tacos"; // Reconfiguration de repli
+        nextTrackName = "tacos"; // Reconfiguration de repli si scellée
       }
     }
 
@@ -1964,9 +1964,7 @@ updateProgress();
 // Démarrage du dossier
 document.getElementById("startBtn").addEventListener("click", () => {
   document.getElementById("startScreen").style.display = "none";
-  Object.values(audio).forEach(a => {
-    a.volume = parseFloat(volume.value);
-  });
+  pauseAllAudio();
   switchStationByName("tacos", true); // Default is Tacos Sad
   toast("Bureau des archives ouvert.");
 });
@@ -2016,6 +2014,7 @@ function openReport(num){
 // Permutation audio isolée au sein de l'archive (Fallen / Moonlight)
 function toggleModalAudio(trackName) {
   if (isModalOpen) {
+    pauseAllAudio();
     playTrack(trackName, true);
     updateRadioUIForTrack(trackName);
 
@@ -2036,6 +2035,9 @@ function toggleModalAudio(trackName) {
 function closeReport(){
   document.getElementById("modal").classList.remove("active");
   isModalOpen = false;
+
+  // Arret total de toute piste interne à l'archive
+  pauseAllAudio();
 
   // Rétablissement propre de la radio globale externe sans distorsion
   currentTrack = savedRadioTrack || "tacos";
@@ -2125,16 +2127,23 @@ function checkUnlock(fromPuzzle){
   if(reportsDone && puzzleSolved){
     const sec = document.getElementById("secret");
     if(sec.classList.contains("locked")){
-      sec.classList.remove("locked");
-      const moon = document.getElementById("moonStation");
-      moon.disabled = false;
-      moon.classList.remove("locked");
-      moon.textContent = "97.7 Moonlight";
-      const sf = document.getElementById("statusFinal");
-      sf.classList.add("done");
-      sf.querySelector(".stamp").textContent = "OUVERTE";
-      toast("Compartiment secret déverrouillé.");
-      setTimeout(()=>document.getElementById("final").scrollIntoView(), 600);
+      // On temporise la levée finale du verrou pour laisser l'animation du miroir brisé s'achever
+      setTimeout(() => {
+        sec.classList.remove("locked");
+        const moon = document.getElementById("moonStation");
+        if (moon) {
+          moon.disabled = false;
+          moon.classList.remove("locked");
+          moon.textContent = "97.7 Moonlight";
+        }
+        const sf = document.getElementById("statusFinal");
+        if (sf) {
+          sf.classList.add("done");
+          sf.querySelector(".stamp").textContent = "OUVERTE";
+        }
+        toast("Compartiment secret déverrouillé.");
+        document.getElementById("final").scrollIntoView();
+      }, 1200); // Synchronisé avec la durée de glassBurst
     }
   }
 }
@@ -2190,7 +2199,7 @@ function drawWeb(){
     if(n.x<0||n.x>ww) n.vx*=-1;
     if(n.y<0||n.y>wh) n.vy*=-1;
   }
-  wctx.strokeStyle = "rgba(230,222,203,.03)";
+  wctx.strokeStyle = "rgba(255,255,255,.03)";
   wctx.lineWidth = devicePixelRatio;
   for(let i=0;i<nodes.length;i++){
     for(let j=i+1;j<nodes.length;j++){
@@ -2210,7 +2219,7 @@ function drawWeb(){
 }
 drawWeb();
 
-/* Oscilloscope Ambre/Rétro CRT */
+/* Oscilloscope Grayscale CRT */
 const scope = document.getElementById("scope");
 const sctx = scope.getContext("2d");
 function resizeScope(){
@@ -2234,10 +2243,10 @@ function drawScope(){
   if(currentTrack === "tacos") amp = 15;
   if(currentTrack === "fallen") amp = 8;
   
-  sctx.strokeStyle="rgba(208, 171, 86, 0.85)";
+  sctx.strokeStyle="rgba(255, 255, 255, 0.85)";
   sctx.lineWidth=1.8*devicePixelRatio;
   sctx.shadowBlur=5*devicePixelRatio;
-  sctx.shadowColor="rgba(208, 171, 86, 0.35)";
+  sctx.shadowColor="rgba(255, 255, 255, 0.2)";
   sctx.beginPath();
   for(let x=0;x<w;x++){
     const y = h/2 + Math.sin(x*.022 + st)*amp*devicePixelRatio + Math.sin(x*.055 + st*1.3)*amp*.22*devicePixelRatio + (Math.random()-.5)*1.8*devicePixelRatio;
@@ -2332,7 +2341,7 @@ function drawMem(){
 }
 drawMem();
 
-/* Canevas de brume obscure procedurale (Mist) */
+/* Canevas de brume obscure ascendante (Mist Canvas - Vertical Fog) */
 const mCanvas = document.getElementById("mistCanvas");
 if (mCanvas) {
   const mistCtx = mCanvas.getContext("2d");
@@ -2343,18 +2352,20 @@ if (mCanvas) {
     const rect = mCanvas.parentElement.getBoundingClientRect();
     mistW = mCanvas.width = rect.width * devicePixelRatio;
     mistH = mCanvas.height = rect.height * devicePixelRatio;
+    mCanvas.style.width = rect.width + "px";
+    mCanvas.style.height = rect.height + "px";
   }
   
   resizeMistCanvas();
   
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 22; i++) {
     mistParticles.push({
       x: Math.random() * mistW,
       y: Math.random() * mistH,
-      r: 60 + Math.random() * 110,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.15,
-      alpha: 0.04 + Math.random() * 0.07
+      r: 30 + Math.random() * 50,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: - (0.4 + Math.random() * 0.9), // Mouvement strictement ascendant
+      alpha: 0.05 + Math.random() * 0.12
     });
   }
   
@@ -2365,15 +2376,22 @@ if (mCanvas) {
     mistParticles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
+      p.r += 0.25; // Expansion de la brume en s'elevant
       
-      if (p.x - p.r > mistW) p.x = -p.r;
-      if (p.x + p.r < 0) p.x = mistW + p.r;
-      if (p.y - p.r > mistH) p.y = -p.r;
-      if (p.y + p.r < 0) p.y = mistH + p.r;
+      let heightPct = p.y / mistH;
+      let currentAlpha = p.alpha * heightPct; // Estompement progressif vers le haut
+      if (currentAlpha < 0) currentAlpha = 0;
+      
+      if (p.y + p.r < 0 || p.r > 220) {
+        p.y = mistH + Math.random() * 30;
+        p.x = Math.random() * mistW;
+        p.r = 20 + Math.random() * 40;
+        p.alpha = 0.05 + Math.random() * 0.12;
+      }
       
       let grad = mistCtx.createRadialGradient(p.x, p.y, 5, p.x, p.y, p.r);
-      grad.addColorStop(0, `rgba(15, 15, 15, ${p.alpha})`);
-      grad.addColorStop(0.5, `rgba(25, 25, 25, ${p.alpha * 0.35})`);
+      grad.addColorStop(0, `rgba(10, 10, 10, ${currentAlpha})`);
+      grad.addColorStop(0.5, `rgba(20, 20, 20, ${currentAlpha * 0.4})`);
       grad.addColorStop(1, "rgba(0, 0, 0, 0)");
       
       mistCtx.fillStyle = grad;

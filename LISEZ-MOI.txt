@@ -1,0 +1,11 @@
+DOSSIER PISCES NOIR
+
+Ouvrez index.html dans un navigateur moderne.
+Tout le style, toute l'animation et tout le JavaScript sont dans index.html.
+Les seules dépendances séparées sont les photos et les fichiers audio dans assets/.
+
+Notes:
+- Cliquez "Ouvrir le dossier" pour lancer Pisces.
+- Cliquez les 3 photos pour débloquer la lettre finale.
+- La station Moonlight se débloque après les 3 rapports.
+- Le texte visible est en français naturel et ne fabrique pas de faux souvenirs.

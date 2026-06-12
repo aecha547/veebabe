@@ -25,9 +25,11 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   background:
-    radial-gradient(circle at 10% 5%,rgba(255,255,255,.03),transparent 20rem),
-    radial-gradient(circle at 90% 15%,rgba(255,255,255,.01),transparent 25rem),
-    linear-gradient(115deg,#000 0%,#080808 45%,#030303 100%);
+    radial-gradient(circle at 12% 8%,rgba(255,255,255,.035),transparent 18rem),
+    radial-gradient(circle at 88% 14%,rgba(255,255,255,.02),transparent 24rem),
+    radial-gradient(ellipse at 50% 118%,rgba(255,255,255,.045),transparent 32rem),
+    linear-gradient(145deg,rgba(255,255,255,.018) 0 1px,transparent 1px 16px),
+    linear-gradient(35deg,#000 0%,#070707 42%,#020202 100%);
   color:var(--ink);
   font-family: Georgia, "Times New Roman", serif;
   min-height:100vh;
@@ -38,10 +40,12 @@ body:before{
   content:"";
   position:fixed; inset:0;
   background:
-    repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg,rgba(255,255,255,.008) 0 1px, transparent 1px 7px);
+    repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.006) 0 1px, transparent 1px 9px),
+    radial-gradient(circle at 30% 20%,transparent 0 9rem,rgba(255,255,255,.018) 9.05rem 9.15rem,transparent 9.2rem),
+    radial-gradient(circle at 70% 72%,transparent 0 13rem,rgba(255,255,255,.012) 13.05rem 13.18rem,transparent 13.25rem);
   mix-blend-mode:overlay;
-  opacity:.2;
+  opacity:.28;
   pointer-events:none;
   z-index:90;
 }
@@ -67,7 +71,7 @@ a{color:inherit}
 }
 #rain{z-index:1}
 #webCanvas{z-index:2; opacity:.2}
-#memoryCanvas{z-index:3}
+#memoryCanvas{z-index:3; opacity:.85}
 
 /* Ecran de bienvenue */
 .start-screen{
@@ -502,6 +506,28 @@ input[type="range"]::-webkit-slider-thumb{
   transform:rotate(1deg);
   box-shadow:0 15px 35px rgba(0,0,0,.7);
   border:1px solid var(--paper-dark);
+  position:relative;
+}
+.interactive-paper{
+  cursor:pointer;
+  transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
+}
+.interactive-paper:hover,
+.interactive-paper:focus-visible{
+  transform:rotate(0deg) translateY(-3px);
+  box-shadow:0 22px 48px rgba(0,0,0,.82);
+  filter:contrast(1.02);
+  outline:none;
+}
+.paper-hint{
+  margin-top:.8rem;
+  border-top:1px dashed rgba(0,0,0,.14);
+  padding-top:.45rem;
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:.62rem;
+  color:#444;
 }
 .case-card:before{
   content:"CONFIDENTIEL";
@@ -946,6 +972,40 @@ input[type="range"]::-webkit-slider-thumb{
   width:100%;
   font-size:.62rem;
 }
+.frequency-strip{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.35rem;
+  margin-top:1rem;
+}
+.freq-card{
+  border:1px solid rgba(255,255,255,.08);
+  background:#040404;
+  padding:.65rem .45rem;
+  text-align:center;
+  min-height:72px;
+}
+.freq-card strong{
+  display:block;
+  font-family:"Courier New", monospace;
+  margin-bottom:.18rem;
+  font-size:.68rem;
+}
+.freq-card .dial-value{
+  font-size:1rem;
+  font-family:"Courier New", monospace;
+  color:var(--silver);
+}
+.freq-card span{
+  display:block;
+  margin-top:.2rem;
+  font-family:"Courier New", monospace;
+  color:#777;
+  font-size:.58rem;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+}
+@media(max-width:560px){.frequency-strip{grid-template-columns:1fr}}
 .puzzle-msg{
   color:#a0a0a0;
   line-height:1.5;
@@ -1315,6 +1375,21 @@ input[type="range"]::-webkit-slider-thumb{
 .report-text p {
   margin:0 0 1rem;
 }
+.document-grid{
+  display:grid;
+  gap:.45rem;
+  font-family:"Courier New", monospace;
+  font-size:.78rem;
+  margin:1rem 0;
+}
+.document-row{
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  gap:1rem;
+  border-bottom:1px dashed rgba(0,0,0,.16);
+  padding:.35rem 0;
+}
+.document-row strong{text-transform:uppercase;letter-spacing:.08em}
 
 .double-rule {
   border-top:1px solid var(--line-dark);
@@ -1334,16 +1409,51 @@ input[type="range"]::-webkit-slider-thumb{
   align-items: center;
 }
 
-/* Toggles Audio de l'Archive */
-.modal-audio-toggles {
-  display: flex;
-  gap: .4rem;
+/* Outils d'enquête : carnet + loupe */
+.report-tools{display:flex;gap:.35rem;align-items:center}
+.icon-btn{
+  width:2.05rem;height:2.05rem;display:inline-grid;place-items:center;
+  border:1px solid rgba(0,0,0,.28);background:transparent;color:#050505;
+  font-family:"Courier New", monospace;font-weight:900;cursor:pointer;
+  transition:background .2s ease,color .2s ease,transform .2s ease;
 }
-.modal-audio-toggles .paper-btn.active-toggle {
-  background: var(--paper-text);
-  color: var(--paper);
-  border-color: var(--paper-text);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+.icon-btn:hover,.icon-btn.active{background:#050505;color:var(--paper);transform:translateY(-1px)}
+.modal-hint{font-family:"Courier New", monospace;text-transform:uppercase;letter-spacing:.1em;color:#555;font-size:.66rem}
+.desk-tools{position:fixed;right:1.15rem;top:50%;transform:translateY(-50%);z-index:170;display:grid;gap:.45rem}
+.desk-tool{
+  width:2.65rem;height:2.65rem;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.18);background:rgba(5,5,5,.86);color:#f2f2f2;
+  box-shadow:0 10px 28px rgba(0,0,0,.65);font-family:"Courier New", monospace;font-size:1.05rem;
+  cursor:pointer;backdrop-filter:blur(10px);transition:transform .2s ease,background .2s ease,color .2s ease;
+}
+.desk-tool:hover,.desk-tool.active{background:#f2f2f2;color:#050505;transform:translateY(-1px)}
+.notepad{
+  position:fixed;right:4.25rem;top:50%;transform:translateY(-50%) translateX(1rem);z-index:180;
+  width:min(320px,calc(100vw - 2rem));display:none;background:var(--paper);color:#050505;
+  border:4px double #111;box-shadow:0 30px 70px rgba(0,0,0,.85);
+}
+.notepad.active{display:block;animation:notepadIn .22s ease forwards}
+@keyframes notepadIn{to{transform:translateY(-50%) translateX(0)}}
+.notepad-head{
+  display:flex;justify-content:space-between;align-items:center;gap:.5rem;border-bottom:1px dashed rgba(0,0,0,.25);
+  padding:.65rem .75rem;font-family:"Courier New", monospace;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;
+}
+.notepad textarea{
+  width:100%;min-height:230px;resize:vertical;border:0;outline:none;padding:.85rem;
+  background:repeating-linear-gradient(0deg, transparent 0 27px, rgba(0,0,0,.08) 28px),var(--paper);
+  color:#050505;font-family:Georgia,"Times New Roman",serif;font-size:.92rem;line-height:1.7;
+}
+.notepad-actions{display:flex;justify-content:space-between;gap:.5rem;padding:.65rem .75rem;border-top:1px solid rgba(0,0,0,.12)}
+.notepad-actions .icon-btn{width:2.4rem;height:2.2rem}
+body.magnify-active,body.magnify-active button,body.magnify-active .interactive-paper{cursor:zoom-in}
+body.magnify-active .report-text{font-size:1.05rem;line-height:1.78}
+body.magnify-active .report-text p:hover,body.magnify-active .newspaper-cols p:hover{
+  background:rgba(0,0,0,.06);outline:1px dashed rgba(0,0,0,.22);transform:scale(1.025);transform-origin:left center;
+}
+@media(max-width:760px){
+  .desk-tools{right:.7rem;top:auto;bottom:1rem;transform:none;grid-auto-flow:column}
+  .notepad{right:.7rem;left:.7rem;top:auto;bottom:4.3rem;transform:none;width:auto}
+  .notepad.active{animation:none}
 }
 
 /* Notifications */
@@ -1425,7 +1535,7 @@ input[type="range"]::-webkit-slider-thumb{
           <button class="station locked" id="moonStation" data-track="moon" data-freq="97.7 MHz" data-name="Clair de lune" disabled>97.7 Scellée</button>
         </div>
         <div class="radio-mini-actions">
-          <button class="ghost-btn" onclick="startReelMode()">Mode boucle</button>
+          <button class="ghost-btn" id="togglePlayBtn" onclick="toggleRadioPlay()">Pause</button>
           <button class="ghost-btn" onclick="restartTrack()">Réécouter</button>
         </div>
         <div class="volume-line">
@@ -1478,7 +1588,7 @@ input[type="range"]::-webkit-slider-thumb{
                 <button class="ghost-btn" onclick="startReelMode()">Lancer la boucle</button>
               </div>
             </div>
-            <div class="case-card">
+            <div class="case-card interactive-paper" role="button" tabindex="0" onclick="openDocument('register')" onkeydown="paperKeyOpen(event, 'register')" aria-label="Ouvrir le registre Pisces Noir">
               <h2>Registre Pisces Noir</h2>
               <div class="case-meta">
                 <div class="file-line"><span>Identité</span><span>Sujet Pisces</span></div>
@@ -1488,6 +1598,7 @@ input[type="range"]::-webkit-slider-thumb{
                 <div class="file-line"><span>Combinaison</span><span>Regard / Force / Mystère</span></div>
                 <div class="file-line"><span>Fréquence d'or</span><span>Chanson secrète</span></div>
               </div>
+              <div class="paper-hint">Cliquer pour consulter le registre</div>
             </div>
           </div>
         </div>
@@ -1583,7 +1694,7 @@ input[type="range"]::-webkit-slider-thumb{
         </div>
 
         <div class="puzzle-box">
-          <div class="puzzle-paper">
+          <div class="puzzle-paper interactive-paper" role="button" tabindex="0" onclick="openDocument('puzzleNote')" onkeydown="paperKeyOpen(event, 'puzzleNote')" aria-label="Ouvrir les notes manuscrites du secrétaire">
             <h3>Notes manuscrites du secrétaire</h3>
             <p>
               Les rapports ne sont pas de simples déclarations tapées à la machine. Chacun d'eux scelle un mot-clé précis.
@@ -1593,6 +1704,7 @@ input[type="range"]::-webkit-slider-thumb{
               L'énigme n'est pas un piège : elle invite à ouvrir le dernier canal secret de la radio. D'abord ce qui vous observe, puis ce qui vous tient droit, et enfin ce qui résiste à l'explication logique.
             </p>
             <p><strong>Rappel d'archive :</strong> A → B → C.</p>
+            <div class="paper-hint">Cliquer pour agrandir ces notes</div>
           </div>
 
           <div class="safe">
@@ -1611,22 +1723,10 @@ input[type="range"]::-webkit-slider-thumb{
               <button class="ghost-btn" onclick="checkPuzzle()">Valider</button>
             </div>
 
-            <div class="dials">
-              <div class="dial">
-                <strong>A</strong>
-                <div class="dial-value">88.5</div>
-                <button class="dial-btn" onclick="switchStationByName('tacos')">Tuner</button>
-              </div>
-              <div class="dial">
-                <strong>B</strong>
-                <div class="dial-value">92.1</div>
-                <button class="dial-btn" onclick="switchStationByName('pisces')">Tuner</button>
-              </div>
-              <div class="dial">
-                <strong>C</strong>
-                <div class="dial-value">104.3</div>
-                <button class="dial-btn" onclick="switchStationByName('fallen')">Tuner</button>
-              </div>
+            <div class="frequency-strip" aria-label="Repères de fréquence, sans boutons redondants">
+              <div class="freq-card"><strong>A</strong><div class="dial-value">88.5</div><span>Nostalgie</span></div>
+              <div class="freq-card"><strong>B</strong><div class="dial-value">92.1</div><span>Pisces</span></div>
+              <div class="freq-card"><strong>C</strong><div class="dial-value">104.3</div><span>Enquête</span></div>
             </div>
             <div class="puzzle-msg" id="puzzleMsg">Parcourez les dossiers photos, puis saisissez le code.</div>
           </div>
@@ -1739,17 +1839,34 @@ input[type="range"]::-webkit-slider-thumb{
     <div class="report-head">
       <span id="reportCase">Dossier Pisces Noir</span>
       <span id="reportNumber">Rapport 00</span>
+      <div class="report-tools" aria-label="Outils du rapport">
+        <button class="icon-btn" type="button" onclick="toggleNotebook(true)" title="Ouvrir le carnet">✎</button>
+        <button class="icon-btn" type="button" id="modalMagnifyBtn" onclick="toggleMagnifier()" title="Activer la loupe">⌕</button>
+      </div>
     </div>
     <h2 id="reportTitle"></h2>
     <div class="report-text" id="reportText"></div>
     <div class="report-actions">
       <button class="paper-btn" onclick="closeReport()">Fermer l'archive</button>
-      <!-- Option de permutation de morceaux isolée sans altérer l'état global externe -->
-      <div class="modal-audio-toggles">
-        <button class="paper-btn" id="modalFallenBtn" onclick="toggleModalAudio('fallen')">Écouter Fallen Down</button>
-        <button class="paper-btn" id="modalMoonBtn" onclick="toggleModalAudio('moon')">Écouter Moonlight</button>
-      </div>
+      <span class="modal-hint">Radio principale à gauche. Carnet et loupe restent disponibles.</span>
     </div>
+  </div>
+</div>
+
+<div class="desk-tools" aria-label="Outils du bureau">
+  <button class="desk-tool" id="deskNoteBtn" type="button" onclick="toggleNotebook()" title="Carnet de notes">✎</button>
+  <button class="desk-tool" id="deskMagnifyBtn" type="button" onclick="toggleMagnifier()" title="Loupe de lecture">⌕</button>
+</div>
+
+<div class="notepad" id="notepad" aria-label="Carnet de notes" aria-hidden="true">
+  <div class="notepad-head">
+    <strong>Carnet noir</strong>
+    <button class="icon-btn" type="button" onclick="toggleNotebook(false)" title="Fermer">×</button>
+  </div>
+  <textarea id="notepadText" placeholder="Indices, mots-clés, intuition..."></textarea>
+  <div class="notepad-actions">
+    <button class="icon-btn" type="button" onclick="saveNotes()" title="Sauvegarder">✓</button>
+    <button class="icon-btn" type="button" onclick="deleteNotes()" title="Effacer">⌫</button>
   </div>
 </div>
 
@@ -1799,6 +1916,39 @@ const reports = {
   }
 };
 
+const archiveDocuments = {
+  register: {
+    number: "Registre général",
+    title: "Registre Pisces Noir",
+    text: `
+      <p class="drop-cap">Ce registre rassemble les paramètres essentiels du dossier : le sujet, le ton, l'objet de la soirée et la combinaison finale. Il n'ajoute pas une nouvelle énigme ; il rend l'enquête plus lisible.</p>
+      <div class="document-grid">
+        <div class="document-row"><strong>Identité</strong><span>Sujet Pisces</span></div>
+        <div class="document-row"><strong>Objet</strong><span>Célébration</span></div>
+        <div class="document-row"><strong>Style</strong><span>Encre d'époque, grain noir, pluie discrète</span></div>
+        <div class="document-row"><strong>Constat</strong><span>Une trace marquante</span></div>
+        <div class="document-row"><strong>Combinaison</strong><span>Regard / Force / Mystère</span></div>
+        <div class="document-row"><strong>Fréquence d'or</strong><span>Station secrète, libérée après le coffret</span></div>
+      </div>
+      <p>Conseil de détective : ouvrez les trois pièces photographiques avant de valider le coffret. Le registre n'est qu'une carte posée sur le bureau.</p>
+    `
+  },
+  puzzleNote: {
+    number: "Note de secrétaire",
+    title: "Notes manuscrites du coffret",
+    text: `
+      <p class="drop-cap">Les rapports ne sont pas de simples déclarations tapées à la machine. Chacun d'eux scelle un mot-clé précis. Après étude des pièces A, B et C, ordonnez-les selon la chronologie de l'enquête.</p>
+      <p>L'énigme n'est pas un piège : elle invite à ouvrir le dernier canal secret de la radio. D'abord ce qui vous observe, puis ce qui vous tient droit, et enfin ce qui résiste à l'explication logique.</p>
+      <div class="document-grid">
+        <div class="document-row"><strong>A</strong><span>Ce qui observe.</span></div>
+        <div class="document-row"><strong>B</strong><span>Ce qui tient droit.</span></div>
+        <div class="document-row"><strong>C</strong><span>Ce qui résiste à l'explication.</span></div>
+      </div>
+      <p><strong>Rappel d'archive :</strong> A → B → C.</p>
+    `
+  }
+};
+
 const audio = {
   pisces: document.getElementById("audio-pisces"),
   tacos: document.getElementById("audio-tacos"),
@@ -1817,8 +1967,10 @@ let savedRadioTrack = "tacos";
 let savedRadioTime = 0;
 let savedRadioPlaying = false;
 let isModalOpen = false;
+let modalChangedAudio = false;
+let modalLoopsAudio = false;
 
-const playlistSequence = ["tacos", "pisces", "fallen", "moon"];
+const playlistSequence = ["tacos", "pisces", "fallen"];
 const volume = document.getElementById("volume");
 
 // Configuration fonctionnelle de l'audio (Zéro chevauchement)
@@ -1843,12 +1995,52 @@ function toast(text){
   window.toastTimer = setTimeout(()=>t.classList.remove("show"), 2500);
 }
 
+const noteStorageKey = "piscesNoirDetectiveNotes";
+const notepad = document.getElementById("notepad");
+const notepadText = document.getElementById("notepadText");
+function storageGet(key){try{return localStorage.getItem(key)||"";}catch{return "";}}
+function storageSet(key,value){try{localStorage.setItem(key,value);return true;}catch{return false;}}
+function storageRemove(key){try{localStorage.removeItem(key);return true;}catch{return false;}}
+function updateToolStates(){
+  const noteOpen = notepad && notepad.classList.contains("active");
+  document.getElementById("deskNoteBtn")?.classList.toggle("active", !!noteOpen);
+  const mag = document.body.classList.contains("magnify-active");
+  document.getElementById("deskMagnifyBtn")?.classList.toggle("active", mag);
+  document.getElementById("modalMagnifyBtn")?.classList.toggle("active", mag);
+}
+function toggleNotebook(force){
+  if(!notepad) return;
+  const shouldOpen = typeof force === "boolean" ? force : !notepad.classList.contains("active");
+  notepad.classList.toggle("active", shouldOpen);
+  notepad.setAttribute("aria-hidden", String(!shouldOpen));
+  if(shouldOpen){notepadText.value = storageGet(noteStorageKey);setTimeout(()=>notepadText.focus(),60);}
+  updateToolStates();
+}
+function saveNotes(){
+  if(storageSet(noteStorageKey, notepadText ? notepadText.value : "")){toast("Carnet sauvegardé.");}
+  else{toast("Sauvegarde impossible dans ce navigateur.");}
+}
+function deleteNotes(){if(notepadText) notepadText.value="";storageRemove(noteStorageKey);toast("Carnet effacé.");}
+function toggleMagnifier(){
+  document.body.classList.toggle("magnify-active");
+  updateToolStates();
+  toast(document.body.classList.contains("magnify-active") ? "Loupe activée." : "Loupe rangée.");
+}
+if(notepadText){notepadText.value = storageGet(noteStorageKey);}
+
+function updatePlayButton(){
+  const btn = document.getElementById("togglePlayBtn");
+  if(!btn) return;
+  btn.textContent = activeTrack && !activeTrack.paused ? "Pause" : "Lecture";
+}
+
 function updateCandleMode() {
   if (currentTrack === "moon" && activeTrack && !activeTrack.paused) {
     document.body.classList.add("candle-mode");
   } else {
     document.body.classList.remove("candle-mode");
   }
+  updatePlayButton();
 }
 
 function isMoonUnlocked(){
@@ -1905,7 +2097,7 @@ function switchStation(btn, restart=true, options={}){
 
   const note = document.getElementById("radioNote");
   if(track === "tacos") {
-    note.textContent = "La mélancolie de Raining Tacos Sad est active. Les mots montent comme une fumée d'encre.";
+    note.textContent = "La mélancolie de Raining Tacos Sad est active. La brume noire et blanche respire derrière le dossier.";
     burstWords();
     if(navigate) scrollToSection("souvenirs");
   }
@@ -1949,7 +2141,13 @@ function switchStationByName(name, restart=true, options={}){
 
 function startReelMode(){
   switchStationByName("tacos", true, {navigate:true, save:true});
-  toast("Mode lecture continue activé : boucle complète.");
+  toast("Playlist principale lancée.");
+}
+
+function toggleRadioPlay(){
+  if(!activeTrack){switchStationByName(currentTrack || "tacos", true, {navigate:false, save:true});return;}
+  if(activeTrack.paused){activeTrack.play().then(updateCandleMode).catch(()=>toast("Cliquez sur la page pour activer la radio."));}
+  else{activeTrack.pause();updateCandleMode();}
 }
 
 function restartTrack(){
@@ -1968,22 +2166,17 @@ Object.entries(audio).forEach(([key,a]) => {
   a.addEventListener("pause", () => updateCandleMode());
   
   a.addEventListener("ended", () => {
-    if (isModalOpen) {
+    if (isModalOpen && modalLoopsAudio) {
       a.currentTime = 0;
       a.play().catch(()=>{});
       return;
     }
 
-    let currentIndex = playlistSequence.indexOf(key);
-    let nextIndex = (currentIndex + 1) % playlistSequence.length;
-    let nextTrackName = playlistSequence[nextIndex];
-
-    if (nextTrackName === "moon") {
-      const isMoonUnlocked = !document.getElementById("moonStation").disabled;
-      if (!isMoonUnlocked) {
-        nextTrackName = "tacos"; // Reconfiguration de repli si scellée
-      }
-    }
+    const sequence = isMoonUnlocked() ? [...playlistSequence, "moon"] : playlistSequence;
+    let currentIndex = sequence.indexOf(key);
+    if(currentIndex < 0) currentIndex = 0;
+    let nextIndex = (currentIndex + 1) % sequence.length;
+    let nextTrackName = sequence[nextIndex];
 
     switchStationByName(nextTrackName, true);
     toast(`Suivant : ${getTrackDisplayName(nextTrackName)}`);
@@ -2032,33 +2225,43 @@ document.getElementById("startBtn").addEventListener("click", () => {
   toast("Bureau des archives ouvert.");
 });
 
-// Évènements d'ouverture des documents (Polaroids)
-function setModalAudioButtons(activeName){
-  const fBtn = document.getElementById("modalFallenBtn");
-  const mBtn = document.getElementById("modalMoonBtn");
-  if(!fBtn || !mBtn) return;
+// Évènements d'ouverture des documents et rapports
+function paperKeyOpen(event, id){
+  if(event.key === "Enter" || event.key === " "){
+    event.preventDefault();
+    openDocument(id);
+  }
+}
 
-  fBtn.classList.toggle("active-toggle", activeName === "fallen");
-  mBtn.classList.toggle("active-toggle", activeName === "moon");
-  mBtn.disabled = !isMoonUnlocked();
-  mBtn.title = isMoonUnlocked() ? "Écouter Moonlight" : "Déverrouillez le coffret pour libérer Moonlight";
+function openModalContent({number, title, text, caseLabel="Dossier Pisces Noir"}){
+  document.getElementById("reportCase").textContent = caseLabel;
+  document.getElementById("reportNumber").textContent = number;
+  document.getElementById("reportTitle").textContent = title;
+  document.getElementById("reportText").innerHTML = text;
+  document.getElementById("modal").classList.add("active");
+  if(!isModalOpen) saveRadioState();
+  isModalOpen = true;
+  updateToolStates();
+}
+
+function openDocument(id){
+  const d = archiveDocuments[id];
+  if(!d) return;
+  modalChangedAudio = false;
+  modalLoopsAudio = false;
+  openModalContent({number:d.number, title:d.title, text:d.text, caseLabel:"Archive consultée"});
 }
 
 function openReport(num){
   const r = reports[num];
-  document.getElementById("reportNumber").textContent = r.number;
-  document.getElementById("reportTitle").textContent = r.title;
-  document.getElementById("reportText").innerHTML = r.text;
-  document.getElementById("modal").classList.add("active");
-
-  if(!isModalOpen) saveRadioState();
-  isModalOpen = true;
+  modalChangedAudio = true;
+  modalLoopsAudio = true;
+  openModalContent({number:r.number, title:r.title, text:r.text, caseLabel:"Dossier Pisces Noir"});
 
   // Logique narrative : Fallen accompagne les rapports; Moonlight reste une récompense scellée.
   const modalTrack = isMoonUnlocked() ? "moon" : "fallen";
   playTrack(modalTrack, true, {allowLockedMoon:false});
   updateRadioUIForTrack(modalTrack);
-  setModalAudioButtons(modalTrack);
 
   unlocked[num] = true;
   const row = document.getElementById("status" + num);
@@ -2068,46 +2271,36 @@ function openReport(num){
   checkUnlock(false);
 }
 
-// Permutation audio isolée au sein de l'archive (Fallen / Moonlight)
-function toggleModalAudio(trackName) {
-  if (!isModalOpen) return;
-  if(trackName === "moon" && !isMoonUnlocked()){
-    toast("Moonlight reste scellée jusqu'au coffret.");
-    setModalAudioButtons("fallen");
-    return;
-  }
-  if(playTrack(trackName, true, {allowLockedMoon:false})){
-    updateRadioUIForTrack(trackName);
-    setModalAudioButtons(trackName);
-  }
-}
-
 function closeReport(){
-  document.getElementById("modal").classList.remove("active");
+  const modal = document.getElementById("modal");
+  if(!modal.classList.contains("active")) return;
+  modal.classList.remove("active");
   isModalOpen = false;
 
-  pauseAllAudio();
-
-  currentTrack = savedRadioTrack || "tacos";
-  activeTrack = audio[currentTrack] || audio.tacos;
-  if (activeTrack) {
-    activeTrack.currentTime = Math.min(savedRadioTime || 0, isFinite(activeTrack.duration) ? activeTrack.duration : savedRadioTime || 0);
-    if (savedRadioPlaying) {
-      activeTrack.play().then(updateCandleMode).catch(err => console.log("Audio play interrupted on restore:", err));
-    } else {
-      activeTrack.pause();
-      updateCandleMode();
+  if(modalChangedAudio){
+    pauseAllAudio();
+    currentTrack = savedRadioTrack || "tacos";
+    activeTrack = audio[currentTrack] || audio.tacos;
+    if (activeTrack) {
+      activeTrack.currentTime = Math.min(savedRadioTime || 0, isFinite(activeTrack.duration) ? activeTrack.duration : savedRadioTime || 0);
+      if (savedRadioPlaying) {activeTrack.play().then(updateCandleMode).catch(err => console.log("Audio play interrupted on restore:", err));}
+      else {activeTrack.pause();updateCandleMode();}
+      updateRadioUIForTrack(currentTrack);
+      if(window.wordSmoke) window.wordSmoke.setFrequency(currentTrack);
     }
-    updateRadioUIForTrack(currentTrack);
-    if(window.wordSmoke) window.wordSmoke.setFrequency(currentTrack);
   }
+  modalChangedAudio = false;
+  modalLoopsAudio = false;
 }
 
 document.getElementById("modal").addEventListener("click", e => {
   if(e.target.id === "modal") closeReport();
 });
 document.addEventListener("keydown", e => {
-  if(e.key === "Escape") closeReport();
+  if(e.key === "Escape"){
+    if(notepad && notepad.classList.contains("active")){toggleNotebook(false);}
+    else {closeReport();}
+  }
 });
 
 function updateLockStatus(){
@@ -2220,7 +2413,6 @@ function checkUnlock(fromPuzzle){
           moon.classList.remove("locked");
           moon.textContent = "97.7 Moonlight";
         }
-        setModalAudioButtons(currentTrack);
         const sf = document.getElementById("statusFinal");
         if (sf) {
           sf.classList.add("done");
@@ -2495,52 +2687,88 @@ function moonFlash(){
   }
 }
 
-/* Particules floues en arrière-plan */
+/* Brume et particules abstraites en arrière-plan global (aucun texte) */
 const memCanvas = document.getElementById("memoryCanvas");
 const mctx = memCanvas.getContext("2d");
-let mw, mh, particles = [];
-function resizeMem(){
-  mw=memCanvas.width=innerWidth*devicePixelRatio;
-  mh=memCanvas.height=innerHeight*devicePixelRatio;
-  memCanvas.style.width = innerWidth+"px";
-  memCanvas.style.height = innerHeight+"px";
+let mw, mh, fogParticles = [], dustParticles = [];
+
+function makeFog(reset=false){
+  return {
+    x: Math.random() * mw,
+    y: reset ? mh + Math.random() * 120 * devicePixelRatio : Math.random() * mh,
+    r: (80 + Math.random() * 190) * devicePixelRatio,
+    vx: (Math.random() - .5) * 12 * devicePixelRatio,
+    vy: (8 + Math.random() * 20) * devicePixelRatio,
+    alpha: .018 + Math.random() * .045,
+    tone: Math.random() > .55 ? 255 : 0
+  };
 }
-addEventListener("resize", resizeMem); resizeMem();
+function makeDust(){
+  return {
+    x: Math.random() * mw,
+    y: Math.random() * mh,
+    vx: (Math.random() - .5) * 8 * devicePixelRatio,
+    vy: (-3 - Math.random() * 10) * devicePixelRatio,
+    size: (.55 + Math.random() * 1.8) * devicePixelRatio,
+    alpha: .05 + Math.random() * .18,
+    pulse: Math.random() * Math.PI * 2
+  };
+}
+function resizeMem(){
+  mw = memCanvas.width = innerWidth * devicePixelRatio;
+  mh = memCanvas.height = innerHeight * devicePixelRatio;
+  memCanvas.style.width = innerWidth + "px";
+  memCanvas.style.height = innerHeight + "px";
+  fogParticles = Array.from({length: Math.min(28, Math.floor(innerWidth / 44))}, () => makeFog(false));
+  dustParticles = Array.from({length: Math.min(95, Math.floor(innerWidth / 9))}, makeDust);
+}
+addEventListener("resize", resizeMem);
+resizeMem();
+
 let lastMemTime = performance.now();
 function drawMem(now=performance.now()){
   const dt = Math.min(0.05, (now - lastMemTime) / 1000 || 0.016);
   lastMemTime = now;
-  mctx.clearRect(0,0,mw,mh);
-  if(!prefersReducedMotion && Math.random()<.04 && particles.length < 22){
-    particles.push({
-      text: memoryWords[Math.floor(Math.random()*memoryWords.length)],
-      x: Math.random()*mw,
-      y: mh + 50,
-      vx:(Math.random()-.5)*18*devicePixelRatio,
-      vy:(18+Math.random()*36)*devicePixelRatio,
-      a:0,
-      life: 7 + Math.random()*7,
-      age: 0,
-      size:(12+Math.random()*15)*devicePixelRatio
-    });
-  }
-  for(let i=particles.length-1;i>=0;i--){
-    const p=particles[i];
-    p.age += dt;
+  mctx.clearRect(0, 0, mw, mh);
+
+  for(let i=fogParticles.length-1; i>=0; i--){
+    let p = fogParticles[i];
+    p.x += p.vx * dt + Math.sin(now * .00012 + i) * .08 * devicePixelRatio;
     p.y -= p.vy * dt;
-    p.x += (p.vx * dt) + Math.sin(p.age * 1.1) * .16 * devicePixelRatio;
-    const t = p.age / p.life;
-    const fadeIn = Math.min(1, t / .18);
-    const fadeOut = Math.min(1, (1 - t) / .35);
-    p.a = Math.max(0, .12 * Math.min(fadeIn, fadeOut));
-    mctx.font=`italic ${p.size}px Georgia, serif`;
-    mctx.fillStyle=`rgba(255,255,255,${p.a})`;
-    mctx.textAlign="center";
-    mctx.fillText(p.text,p.x,p.y);
-    if(p.y < -80 || p.age > p.life){
-      particles.splice(i,1);
-    }
+    if(p.y + p.r < 0 || p.x < -p.r || p.x > mw + p.r){fogParticles[i] = makeFog(true);p = fogParticles[i];}
+    const grad = mctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+    const tone = p.tone;
+    grad.addColorStop(0, `rgba(${tone},${tone},${tone},${p.alpha})`);
+    grad.addColorStop(.48, `rgba(${tone},${tone},${tone},${p.alpha * .28})`);
+    grad.addColorStop(1, `rgba(${tone},${tone},${tone},0)`);
+    mctx.fillStyle = grad;
+    mctx.beginPath();
+    mctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    mctx.fill();
   }
+
+  mctx.save();
+  mctx.globalCompositeOperation = "screen";
+  dustParticles.forEach((p, i) => {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.pulse += dt * 1.6;
+    if(p.y < -10 || p.x < -10 || p.x > mw + 10){dustParticles[i] = makeDust();dustParticles[i].y = mh + 10;p = dustParticles[i];}
+    const a = p.alpha * (.55 + Math.sin(p.pulse) * .35);
+    mctx.fillStyle = `rgba(255,255,255,${Math.max(0,a)})`;
+    mctx.fillRect(p.x, p.y, p.size, p.size);
+  });
+  mctx.restore();
+
+  mctx.strokeStyle = "rgba(255,255,255,.018)";
+  mctx.lineWidth = 1 * devicePixelRatio;
+  for(let y = ((now * .006) % (90 * devicePixelRatio)); y < mh; y += 90 * devicePixelRatio){
+    mctx.beginPath();
+    mctx.moveTo(0, y);
+    mctx.bezierCurveTo(mw*.25, y-18*devicePixelRatio, mw*.68, y+22*devicePixelRatio, mw, y-8*devicePixelRatio);
+    mctx.stroke();
+  }
+
   requestAnimationFrame(drawMem);
 }
 drawMem();
@@ -2613,6 +2841,7 @@ if (mCanvas) {
   addEventListener("resize", resizeMistCanvas);
 }
 
+updateToolStates();
 updateLockStatus();
 </script>
 </body>

@@ -1,11 +1,19 @@
-DOSSIER PISCES NOIR
+DOSSIER PISCES NOIR — VERSION 2
 
 Ouvrez index.html dans un navigateur moderne.
-Tout le style, toute l'animation et tout le JavaScript sont dans index.html.
-Les seules dépendances séparées sont les photos et les fichiers audio dans assets/.
+Tout le style et le JavaScript sont dans index.html.
 
-Notes:
-- Cliquez "Ouvrir le dossier" pour lancer Pisces.
-- Cliquez les 3 photos pour débloquer la lettre finale.
-- La station Moonlight se débloque après les 3 rapports.
-- Le texte visible est en français naturel et ne fabrique pas de faux souvenirs.
+Corrections de cette version:
+- Les MP3 ont été réencodés en 44.1 kHz / 192 kbps pour éviter les coupures de lecture.
+- Raining Tacos ne devrait plus s'arrêter au milieu; il joue jusqu'à la fin.
+- Ajout d'un mode bobine: Nostalgie -> Enquête -> Pisces.
+- La zone de lettre scellée n'est plus floutée; elle est simplement masquée jusqu'au déverrouillage.
+- Meilleur usage des espaces, sections moins serrées, alignements plus propres.
+- Ajout d'un puzzle: inspecter les 3 rapports puis entrer Regard -> Force -> Mystère.
+- Moonlight se déverrouille après les rapports et le puzzle.
+
+Audio processing log:
+Re-encoded Pisces - Tony Ann (Piano Cover).mp3 -> pisces.mp3
+Re-encoded its_raining_tacos_sad.mp3 -> raining_tacos_sad.mp3
+Re-encoded fallen-down.mp3 -> fallen_down.mp3
+Re-encoded Moonlight Candles.mp3 -> moonlight_candles.mp3

@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dossier Pisces Noir</title>
+<title>Dossier Pisces Noir — Version complète</title>
 <style>
 :root{
   --paper:#e8e2d3;
   --paper2:#cfc6b6;
   --ink:#ececec;
-  --muted:#a9a9a9;
+  --muted:#b9b9b9;
   --deep:#040404;
   --black:#000;
-  --soft:#151515;
-  --line:#393939;
-  --silver:#cfcfcf;
+  --soft:#141414;
+  --line:#3f3f3f;
+  --silver:#d5d5d5;
   --fog:rgba(255,255,255,.08);
   --gold:#d7c58c;
-  --warn:#bfbfbf;
   --shadow:0 30px 90px rgba(0,0,0,.78);
+  --max:1320px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -37,10 +37,10 @@ body:before{
   content:"";
   position:fixed; inset:0;
   background:
-    repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px, transparent 1px 7px);
+    repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px, transparent 1px 7px);
   mix-blend-mode:overlay;
-  opacity:.27;
+  opacity:.22;
   pointer-events:none;
   z-index:90;
 }
@@ -48,21 +48,21 @@ body:after{
   content:"";
   position:fixed; inset:-10%;
   background:
-    radial-gradient(circle, transparent 45%, rgba(0,0,0,.82) 82%),
-    linear-gradient(100deg, transparent 0 17%, rgba(255,255,255,.075) 18%, transparent 20% 44%, rgba(255,255,255,.035) 46%, transparent 49%),
-    repeating-linear-gradient(0deg,transparent 0 72px,rgba(0,0,0,.4) 73px 90px);
+    radial-gradient(circle, transparent 45%, rgba(0,0,0,.78) 82%),
+    linear-gradient(100deg, transparent 0 17%, rgba(255,255,255,.07) 18%, transparent 20% 44%, rgba(255,255,255,.035) 46%, transparent 49%),
+    repeating-linear-gradient(0deg,transparent 0 82px,rgba(0,0,0,.26) 83px 98px);
   pointer-events:none;
   z-index:80;
 }
 button{font:inherit}
 a{color:inherit}
-#rain,#webCanvas,#memoryCanvas,#scope{
+#rain,#webCanvas,#memoryCanvas{
   position:fixed;
   inset:0;
   pointer-events:none;
 }
 #rain{z-index:1}
-#webCanvas{z-index:2; opacity:.55}
+#webCanvas{z-index:2; opacity:.48}
 #memoryCanvas{z-index:3}
 .start-screen{
   position:fixed;
@@ -76,13 +76,13 @@ a{color:inherit}
   padding:1.5rem;
 }
 .start-card{
-  width:min(760px,100%);
+  width:min(780px,100%);
   border:1px solid rgba(255,255,255,.22);
   background:
     linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),
     #090909;
   box-shadow:var(--shadow);
-  padding:clamp(1.4rem,4vw,3rem);
+  padding:clamp(1.6rem,4vw,3.2rem);
   position:relative;
   overflow:hidden;
 }
@@ -115,25 +115,25 @@ a{color:inherit}
   font-weight:900;
 }
 .start-card p{
-  max-width:58ch;
+  max-width:60ch;
   line-height:1.75;
   color:#d5d5d5;
   margin:0 0 1.5rem;
   font-size:1.05rem;
 }
-.primary-btn,.ghost-btn,.station,.paper-btn{
+.primary-btn,.ghost-btn,.station,.paper-btn,.chip,.dial-btn{
   cursor:pointer;
   border:1px solid rgba(255,255,255,.34);
   background:#111;
   color:#f2f2f2;
-  padding:.8rem 1rem;
+  padding:.82rem 1rem;
   text-transform:uppercase;
   letter-spacing:.13em;
   font-family:"Courier New", monospace;
-  font-size:.8rem;
+  font-size:.78rem;
   transition:.25s ease;
 }
-.primary-btn:hover,.ghost-btn:hover,.station:hover,.paper-btn:hover{
+.primary-btn:hover,.ghost-btn:hover,.station:hover,.paper-btn:hover,.chip:hover,.dial-btn:hover{
   transform:translateY(-2px);
   background:#f2f2f2;
   color:#070707;
@@ -145,13 +145,13 @@ a{color:inherit}
   padding:clamp(1rem,2vw,2rem);
 }
 .layout{
-  width:min(1320px,100%);
+  width:min(var(--max),100%);
   margin:0 auto;
   display:grid;
-  grid-template-columns:minmax(280px,360px) 1fr;
-  gap:clamp(1rem,3vw,2.4rem);
+  grid-template-columns:minmax(290px,365px) minmax(0,1fr);
+  gap:clamp(1.2rem,3vw,2.8rem);
 }
-@media(max-width:940px){
+@media(max-width:980px){
   .layout{grid-template-columns:1fr}
   .left-panel{position:static!important}
 }
@@ -170,13 +170,13 @@ a{color:inherit}
   box-shadow:0 18px 55px rgba(0,0,0,.42);
   backdrop-filter: blur(8px);
 }
-.panel-pad{padding:1rem}
+.panel-pad{padding:1.05rem}
 .panel h2,.panel h3{
   font-family:"Courier New", monospace;
   text-transform:uppercase;
   letter-spacing:.18em;
   font-size:.86rem;
-  margin:0 0 .8rem;
+  margin:0 0 .85rem;
   color:#efefef;
 }
 .mini-row{
@@ -184,7 +184,7 @@ a{color:inherit}
   align-items:center;
   justify-content:space-between;
   gap:1rem;
-  padding:.65rem 0;
+  padding:.68rem 0;
   border-top:1px dashed rgba(255,255,255,.16);
   font-family:"Courier New", monospace;
   font-size:.78rem;
@@ -197,6 +197,7 @@ a{color:inherit}
   padding:.18rem .38rem;
   transform:rotate(-3deg);
   display:inline-block;
+  white-space:nowrap;
 }
 .mini-row.done .stamp{
   color:#f0f0f0;
@@ -231,20 +232,21 @@ a{color:inherit}
 @keyframes sweep{to{transform:translateX(100%)}}
 .freq{
   font-family:"Courier New", monospace;
-  font-size:1.65rem;
+  font-size:1.55rem;
   letter-spacing:.08em;
 }
 .station-name{
   font-family:"Courier New", monospace;
   color:#aaa;
-  font-size:.75rem;
-  margin-top:.2rem;
+  font-size:.72rem;
+  margin-top:.25rem;
   text-transform:uppercase;
-  letter-spacing:.16em;
+  letter-spacing:.14em;
+  line-height:1.35;
 }
 .scope-wrap{
   position:relative;
-  height:76px;
+  height:74px;
   border:1px solid rgba(255,255,255,.16);
   background:linear-gradient(180deg,#020202,#0a0a0a);
   overflow:hidden;
@@ -257,8 +259,8 @@ a{color:inherit}
   gap:.5rem;
 }
 .station{
-  padding:.65rem .4rem;
-  font-size:.73rem;
+  padding:.68rem .42rem;
+  font-size:.72rem;
   background:#0b0b0b;
 }
 .station.active{
@@ -270,14 +272,14 @@ a{color:inherit}
   cursor:not-allowed;
 }
 .now-playing{
-  margin-top:.8rem;
+  margin-top:.85rem;
   color:#a6a6a6;
   font-family:"Courier New", monospace;
   font-size:.75rem;
   line-height:1.55;
 }
 .volume-line{
-  margin-top:.8rem;
+  margin-top:.85rem;
   display:grid;
   grid-template-columns:auto 1fr;
   gap:.7rem;
@@ -287,18 +289,49 @@ a{color:inherit}
   font-size:.75rem;
 }
 input[type="range"]{width:100%; accent-color:#ddd}
+.radio-mini-actions{
+  margin-top:.75rem;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.5rem;
+}
+.radio-mini-actions .ghost-btn{
+  padding:.65rem .45rem;
+  font-size:.66rem;
+}
+.progress-bar{
+  margin-top:.75rem;
+  height:6px;
+  background:#050505;
+  border:1px solid rgba(255,255,255,.15);
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#e8e8e8;
+  transition:width .25s linear;
+}
+.timecode{
+  display:flex;
+  justify-content:space-between;
+  color:#848484;
+  font-family:"Courier New", monospace;
+  font-size:.68rem;
+  margin-top:.4rem;
+}
 .hero{
   min-height:88vh;
   display:grid;
   align-items:center;
-  padding:2rem 0 4rem;
+  padding:2rem 0 5rem;
 }
 .hero-inner{
   border:1px solid rgba(255,255,255,.16);
   background:
     linear-gradient(125deg,rgba(255,255,255,.06),rgba(0,0,0,.18) 40%),
     rgba(8,8,8,.72);
-  padding:clamp(1.2rem,5vw,4rem);
+  padding:clamp(1.6rem,5vw,4.2rem);
   position:relative;
   overflow:hidden;
   box-shadow:var(--shadow);
@@ -314,25 +347,25 @@ input[type="range"]{width:100%; accent-color:#ddd}
 .hero-grid{
   position:relative;
   display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:clamp(1rem,4vw,3rem);
+  grid-template-columns:minmax(0,1.06fr) minmax(280px,.94fr);
+  gap:clamp(1.4rem,4vw,3.4rem);
   align-items:center;
 }
-@media(max-width:860px){.hero-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
 .kicker{
   font-family:"Courier New", monospace;
   text-transform:uppercase;
   letter-spacing:.22em;
   color:#cfcfcf;
   font-size:.78rem;
-  margin-bottom:.9rem;
+  margin-bottom:1rem;
 }
 .hero h1{
-  font-size:clamp(3.6rem,10vw,8.8rem);
-  line-height:.78;
+  font-size:clamp(3.4rem,9vw,8.3rem);
+  line-height:.8;
   text-transform:uppercase;
   letter-spacing:-.08em;
-  margin:0 0 1.2rem;
+  margin:0 0 1.25rem;
 }
 .hero h1 span{
   display:block;
@@ -344,13 +377,13 @@ input[type="range"]{width:100%; accent-color:#ddd}
   font-size:1.12rem;
   color:#d6d6d6;
   line-height:1.85;
-  margin:0 0 1.5rem;
+  margin:0 0 1.6rem;
 }
 .hero-actions{display:flex; flex-wrap:wrap; gap:.75rem}
 .case-card{
   background:var(--paper);
   color:#111;
-  padding:1rem;
+  padding:1.1rem;
   transform:rotate(1.2deg);
   box-shadow:0 24px 60px rgba(0,0,0,.65);
   position:relative;
@@ -377,7 +410,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
 }
 .case-meta{
   display:grid;
-  gap:.45rem;
+  gap:.5rem;
   font-family:"Courier New", monospace;
   font-size:.84rem;
   line-height:1.4;
@@ -388,29 +421,29 @@ input[type="range"]{width:100%; accent-color:#ddd}
   border-bottom:1px dashed rgba(0,0,0,.35);
   gap:1rem;
 }
-.evidence-section{
-  padding:2rem 0;
+.section{
+  padding:3rem 0;
 }
 .section-head{
-  display:flex;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(240px,420px);
+  gap:1.2rem;
   align-items:end;
-  justify-content:space-between;
-  gap:1rem;
-  margin-bottom:1rem;
+  margin-bottom:1.3rem;
   border-bottom:1px solid rgba(255,255,255,.16);
   padding-bottom:1rem;
 }
+@media(max-width:760px){.section-head{grid-template-columns:1fr}}
 .section-head h2{
-  font-size:clamp(2rem,5vw,4rem);
+  font-size:clamp(2.1rem,5vw,4.1rem);
   text-transform:uppercase;
   letter-spacing:-.055em;
-  line-height:.85;
+  line-height:.86;
   margin:0;
 }
 .section-head p{
   font-family:"Courier New", monospace;
   color:#aaa;
-  max-width:38ch;
   line-height:1.55;
   margin:0;
   font-size:.82rem;
@@ -422,8 +455,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
     radial-gradient(circle at 30% 20%,rgba(255,255,255,.09),transparent 24rem),
     linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012)),
     #090909;
-  min-height:650px;
-  padding:clamp(1rem,3vw,2rem);
+  padding:clamp(1.2rem,3vw,2.3rem);
   overflow:hidden;
   box-shadow:var(--shadow);
 }
@@ -431,11 +463,22 @@ input[type="range"]{width:100%; accent-color:#ddd}
   content:"";
   position:absolute; inset:0;
   background-image:
-    linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
   background-size:42px 42px;
   mask-image:radial-gradient(circle at center,black,transparent 76%);
   pointer-events:none;
+}
+.board-grid{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1.5rem;
+}
+.thread-area{
+  position:relative;
+  min-height:560px;
 }
 .thread-svg{
   position:absolute;
@@ -443,7 +486,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
   width:100%;
   height:100%;
   z-index:0;
-  opacity:.55;
+  opacity:.42;
 }
 .thread-svg line{
   stroke:#dedede;
@@ -457,9 +500,10 @@ input[type="range"]{width:100%; accent-color:#ddd}
   grid-template-columns:repeat(3,minmax(180px,1fr));
   gap:clamp(1rem,3vw,2rem);
   align-items:start;
+  padding:1.2rem 0 0;
 }
-@media(max-width:850px){
-  .board{min-height:auto}
+@media(max-width:900px){
+  .thread-area{min-height:auto}
   .polaroids{grid-template-columns:1fr}
   .thread-svg{display:none}
 }
@@ -472,10 +516,10 @@ input[type="range"]{width:100%; accent-color:#ddd}
   cursor:pointer;
   filter:drop-shadow(0 24px 45px rgba(0,0,0,.62));
 }
-.photo-card:nth-child(1){transform:rotate(-4deg); margin-top:3rem}
-.photo-card:nth-child(2){transform:rotate(2.5deg); margin-top:.5rem}
-.photo-card:nth-child(3){transform:rotate(-1.8deg); margin-top:4.5rem}
-@media(max-width:850px){.photo-card{transform:none!important;margin-top:0!important}}
+.photo-card:nth-child(1){transform:rotate(-3.4deg); margin-top:2.6rem}
+.photo-card:nth-child(2){transform:rotate(2deg); margin-top:.4rem}
+.photo-card:nth-child(3){transform:rotate(-1.3deg); margin-top:3.8rem}
+@media(max-width:900px){.photo-card{transform:none!important;margin-top:0!important}}
 .photo-paper{
   background:#e8e4d8;
   padding:.8rem .8rem 2.35rem;
@@ -503,7 +547,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
 }
 .photo-paper img{
   width:100%;
-  aspect-ratio:4/5.2;
+  aspect-ratio:4/5.15;
   object-fit:cover;
   display:block;
   filter:grayscale(100%) contrast(1.18) brightness(.95);
@@ -534,29 +578,26 @@ input[type="range"]{width:100%; accent-color:#ddd}
   box-shadow:0 2px 5px rgba(0,0,0,.7);
 }
 .photo-note{
-  margin-top:.85rem;
+  margin-top:.9rem;
   color:#bdbdbd;
   font-family:"Courier New", monospace;
   font-size:.78rem;
   line-height:1.55;
   background:rgba(0,0,0,.36);
-  padding:.75rem;
+  padding:.8rem;
   border:1px solid rgba(255,255,255,.12);
 }
 .timeline{
-  margin-top:1.5rem;
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:.75rem;
-  position:relative;
-  z-index:1;
+  gap:1rem;
 }
-@media(max-width:700px){.timeline{grid-template-columns:1fr}}
+@media(max-width:780px){.timeline{grid-template-columns:1fr}}
 .clue{
   border:1px solid rgba(255,255,255,.14);
   background:rgba(0,0,0,.33);
-  padding:1rem;
-  min-height:130px;
+  padding:1.05rem;
+  min-height:138px;
 }
 .clue strong{
   display:block;
@@ -564,19 +605,16 @@ input[type="range"]{width:100%; accent-color:#ddd}
   text-transform:uppercase;
   letter-spacing:.14em;
   font-size:.75rem;
-  margin-bottom:.6rem;
+  margin-bottom:.65rem;
 }
-.clue p{margin:0;color:#b9b9b9;line-height:1.6;font-size:.95rem}
-.memory-section{
-  padding:3rem 0;
-}
+.clue p{margin:0;color:#b9b9b9;line-height:1.65;font-size:.95rem}
 .reel{
   border:1px solid rgba(255,255,255,.16);
   background:#070707;
   box-shadow:var(--shadow);
   position:relative;
   overflow:hidden;
-  padding:clamp(1rem,3vw,2rem);
+  padding:clamp(1.2rem,3vw,2.2rem);
 }
 .reel:before,.reel:after{
   content:"";
@@ -584,17 +622,17 @@ input[type="range"]{width:100%; accent-color:#ddd}
   left:0; right:0;
   height:28px;
   background:repeating-linear-gradient(90deg,#000 0 18px,#222 18px 30px,#000 30px 48px);
-  opacity:.85;
+  opacity:.84;
 }
 .reel:before{top:0}.reel:after{bottom:0}
 .reel-inner{
-  margin:2rem 0;
+  margin:2.2rem 0;
   display:grid;
-  grid-template-columns:1fr 1.1fr;
-  gap:2rem;
+  grid-template-columns:minmax(260px,.9fr) minmax(320px,1.1fr);
+  gap:2.2rem;
   align-items:center;
 }
-@media(max-width:830px){.reel-inner{grid-template-columns:1fr}}
+@media(max-width:900px){.reel-inner{grid-template-columns:1fr}}
 .reel-title{
   font-size:clamp(2.2rem,6vw,5rem);
   line-height:.88;
@@ -608,7 +646,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
   font-size:1.05rem;
 }
 .word-machine{
-  min-height:360px;
+  min-height:380px;
   border:1px solid rgba(255,255,255,.18);
   background:
     linear-gradient(180deg,rgba(255,255,255,.07),transparent),
@@ -631,8 +669,134 @@ input[type="range"]{width:100%; accent-color:#ddd}
   74%{opacity:.6}
   to{transform:translateY(-120%) scale(1.06); opacity:0}
 }
-.final-section{
-  padding:3rem 0 6rem;
+.puzzle-box{
+  border:1px solid rgba(255,255,255,.16);
+  background:
+    radial-gradient(circle at 80% 10%,rgba(255,255,255,.09),transparent 20rem),
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),
+    #080808;
+  box-shadow:var(--shadow);
+  padding:clamp(1.2rem,3vw,2.2rem);
+  display:grid;
+  grid-template-columns:minmax(260px,.85fr) minmax(320px,1.15fr);
+  gap:2rem;
+  align-items:start;
+}
+@media(max-width:900px){.puzzle-box{grid-template-columns:1fr}}
+.puzzle-paper{
+  background:var(--paper);
+  color:#111;
+  padding:1.25rem;
+  min-height:330px;
+  box-shadow:0 20px 55px rgba(0,0,0,.55);
+  transform:rotate(-.6deg);
+  position:relative;
+}
+.puzzle-paper:before{
+  content:"CLEF";
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  color:rgba(0,0,0,.2);
+  border:3px solid rgba(0,0,0,.16);
+  font-family:"Courier New", monospace;
+  padding:.22rem .45rem;
+  transform:rotate(7deg);
+  font-weight:900;
+}
+.puzzle-paper h3{
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font-size:1rem;
+  margin:0 0 1rem;
+}
+.puzzle-paper p{
+  line-height:1.72;
+  margin:.85rem 0;
+}
+.safe{
+  border:1px solid rgba(255,255,255,.18);
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 7px),
+    #060606;
+  padding:1.2rem;
+}
+.safe h3{
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  font-size:.86rem;
+  margin:0 0 1rem;
+}
+.sequence-window{
+  min-height:58px;
+  border:1px solid rgba(255,255,255,.2);
+  background:#020202;
+  padding:.85rem;
+  color:#d6d6d6;
+  font-family:"Courier New", monospace;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  flex-wrap:wrap;
+}
+.sequence-window span{
+  border:1px solid rgba(255,255,255,.2);
+  padding:.25rem .45rem;
+}
+.chips{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.65rem;
+  margin:1rem 0;
+}
+@media(max-width:560px){.chips{grid-template-columns:1fr 1fr}}
+.chip{
+  background:#101010;
+  padding:.82rem .4rem;
+  font-size:.72rem;
+}
+.puzzle-actions{
+  display:flex;
+  gap:.65rem;
+  flex-wrap:wrap;
+}
+.dials{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.65rem;
+  margin-top:1rem;
+}
+.dial{
+  border:1px solid rgba(255,255,255,.16);
+  background:#0d0d0d;
+  padding:.75rem;
+  text-align:center;
+}
+.dial strong{
+  display:block;
+  font-family:"Courier New", monospace;
+  margin-bottom:.5rem;
+}
+.dial .dial-value{
+  font-size:1.35rem;
+  font-family:"Courier New", monospace;
+}
+.dial-btn{
+  margin-top:.55rem;
+  padding:.5rem;
+  width:100%;
+  font-size:.66rem;
+}
+.puzzle-msg{
+  color:#bcbcbc;
+  line-height:1.65;
+  font-family:"Courier New", monospace;
+  font-size:.78rem;
+  margin-top:.85rem;
 }
 .secret{
   border:1px solid rgba(255,255,255,.16);
@@ -643,38 +807,57 @@ input[type="range"]{width:100%; accent-color:#ddd}
   box-shadow:var(--shadow);
   overflow:hidden;
 }
-.secret.locked .secret-body{filter:blur(5px); opacity:.18; pointer-events:none}
+.secret.locked .secret-body{display:none}
 .lock-cover{
-  padding:2rem;
+  padding:clamp(1.6rem,4vw,3rem);
   display:grid;
   place-items:center;
   text-align:center;
-  min-height:260px;
+  min-height:360px;
+  background:
+    radial-gradient(circle at 50% 70%,rgba(255,255,255,.09),transparent 17rem),
+    linear-gradient(180deg,rgba(255,255,255,.05),transparent);
 }
 .secret:not(.locked) .lock-cover{display:none}
 .lock-cover h2{
-  font-size:clamp(2rem,5vw,4rem);
+  font-size:clamp(2.1rem,5vw,4.3rem);
   margin:0 0 1rem;
   text-transform:uppercase;
   letter-spacing:-.05em;
 }
 .lock-cover p{
   color:#bbb;
-  line-height:1.7;
-  max-width:52ch;
-  margin:0 auto;
+  line-height:1.75;
+  max-width:56ch;
+  margin:0 auto 1rem;
+}
+.lock-status{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(180px,1fr));
+  gap:.75rem;
+  margin-top:1.2rem;
+  max-width:560px;
+}
+@media(max-width:560px){.lock-status{grid-template-columns:1fr}}
+.lock-status div{
+  border:1px solid rgba(255,255,255,.16);
+  padding:.75rem;
+  font-family:"Courier New", monospace;
+  font-size:.74rem;
+  color:#aaa;
+  text-transform:uppercase;
 }
 .secret-body{
-  padding:clamp(1rem,4vw,3rem);
+  padding:clamp(1.2rem,4vw,3rem);
 }
 .letter-wrap{
   display:grid;
-  grid-template-columns:minmax(250px,.7fr) 1.3fr;
-  gap:2rem;
+  grid-template-columns:minmax(250px,.7fr) minmax(0,1.3fr);
+  gap:2.1rem;
 }
-@media(max-width:900px){.letter-wrap{grid-template-columns:1fr}}
+@media(max-width:930px){.letter-wrap{grid-template-columns:1fr}}
 .big-moon{
-  min-height:440px;
+  min-height:470px;
   border:1px solid rgba(255,255,255,.16);
   background:
     radial-gradient(circle at 50% 35%,rgba(255,255,255,.88) 0 9%,rgba(255,255,255,.34) 10% 16%,rgba(255,255,255,.08) 18% 25%,transparent 26%),
@@ -690,13 +873,22 @@ input[type="range"]{width:100%; accent-color:#ddd}
     repeating-linear-gradient(110deg,transparent 0 18px,rgba(255,255,255,.045) 19px 20px),
     radial-gradient(circle at 55% 45%,transparent 0 9%,rgba(0,0,0,.5) 9.5% 12%,transparent 12.5%);
 }
+.big-moon:after{
+  content:"97.7 MHz";
+  position:absolute;
+  bottom:1rem;
+  left:1rem;
+  font-family:"Courier New", monospace;
+  letter-spacing:.18em;
+  color:#aaa;
+}
 .final-letter{
   background:var(--paper);
   color:#111;
-  padding:clamp(1.2rem,3vw,2.2rem);
+  padding:clamp(1.25rem,3vw,2.25rem);
   box-shadow:0 22px 55px rgba(0,0,0,.65);
   position:relative;
-  transform:rotate(-.3deg);
+  transform:rotate(-.25deg);
 }
 .final-letter:before{
   content:"DOSSIER FINAL";
@@ -711,15 +903,16 @@ input[type="range"]{width:100%; accent-color:#ddd}
   font-weight:900;
 }
 .final-letter h2{
-  margin:0 0 1rem;
+  margin:0 0 1.1rem;
   font-size:clamp(2rem,5vw,3.6rem);
   line-height:.9;
   letter-spacing:-.055em;
   text-transform:uppercase;
+  max-width:12ch;
 }
 .final-letter p{
   font-size:1.05rem;
-  line-height:1.8;
+  line-height:1.82;
   margin:0 0 1rem;
 }
 .signature{
@@ -729,7 +922,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
   font-style:italic;
 }
 .footer{
-  width:min(1320px,100%);
+  width:min(var(--max),100%);
   margin:0 auto;
   border-top:1px solid rgba(255,255,255,.16);
   padding:1.2rem 0 2rem;
@@ -750,7 +943,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
 }
 .modal.active{display:grid}
 .report{
-  width:min(760px,100%);
+  width:min(780px,100%);
   max-height:92vh;
   overflow:auto;
   background:
@@ -758,7 +951,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
     linear-gradient(180deg,#eee8d8,#d9d0bf);
   color:#111;
   box-shadow:0 30px 90px rgba(0,0,0,.85);
-  padding:clamp(1.2rem,4vw,2.4rem);
+  padding:clamp(1.25rem,4vw,2.45rem);
   border:1px solid #fff;
   position:relative;
 }
@@ -777,8 +970,8 @@ input[type="range"]{width:100%; accent-color:#ddd}
   justify-content:space-between;
   gap:1rem;
   border-bottom:2px dashed rgba(0,0,0,.35);
-  padding-bottom:.8rem;
-  margin-bottom:1.1rem;
+  padding-bottom:.85rem;
+  margin-bottom:1.15rem;
   font-family:"Courier New", monospace;
   text-transform:uppercase;
   font-size:.8rem;
@@ -828,10 +1021,10 @@ input[type="range"]{width:100%; accent-color:#ddd}
 .hidden-audio{display:none}
 @media print{
   body{background:#fff;color:#000}
-  .start-screen,.left-panel,#rain,#webCanvas,#memoryCanvas,.hero,.evidence-section,.memory-section,.footer,.lock-cover,.big-moon,.radio{display:none!important}
+  .start-screen,.left-panel,#rain,#webCanvas,#memoryCanvas,.hero,.section-head,.board,.reel,.puzzle-box,.footer,.lock-cover,.big-moon{display:none!important}
   .layout{display:block}
   .secret{box-shadow:none;border:0}
-  .secret.locked .secret-body{filter:none;opacity:1}
+  .secret.locked .secret-body{display:block}
   .final-letter{box-shadow:none;transform:none}
 }
 </style>
@@ -862,6 +1055,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
         <div class="mini-row" id="status1"><span>Pièce A inspectée</span><span class="stamp">EN ATTENTE</span></div>
         <div class="mini-row" id="status2"><span>Pièce B inspectée</span><span class="stamp">EN ATTENTE</span></div>
         <div class="mini-row" id="status3"><span>Pièce C inspectée</span><span class="stamp">EN ATTENTE</span></div>
+        <div class="mini-row" id="statusPuzzle"><span>Coffret résolu</span><span class="stamp">VERROU</span></div>
         <div class="mini-row" id="statusFinal"><span>Lettre finale</span><span class="stamp">SCELLÉE</span></div>
       </section>
 
@@ -880,11 +1074,17 @@ input[type="range"]{width:100%; accent-color:#ddd}
           <button class="station" data-track="fallen" data-freq="104.3 MHz" data-name="Pas perdus">104.3 Enquête</button>
           <button class="station locked" id="moonStation" data-track="moon" data-freq="97.7 MHz" data-name="Clair de lune" disabled>97.7 Scellée</button>
         </div>
+        <div class="radio-mini-actions">
+          <button class="ghost-btn" onclick="startReelMode()">Mode bobine</button>
+          <button class="ghost-btn" onclick="restartTrack()">Rejouer piste</button>
+        </div>
         <div class="volume-line">
           <span>Volume</span><input id="volume" type="range" min="0" max="1" step=".01" value=".55">
         </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="timecode"><span id="timeNow">0:00</span><span id="timeTotal">0:00</span></div>
         <p class="now-playing" id="radioNote">
-          Pisces reste la bande-son globale. Les autres fréquences accompagnent les souvenirs, l'enquête, puis la révélation finale.
+          Les fichiers audio ont été réencodés pour éviter les coupures. Le mode bobine lit Nostalgie puis Enquête puis revient à Pisces.
         </p>
       </section>
 
@@ -892,7 +1092,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
         <h3>Règle du dossier</h3>
         <div class="mini-row"><span>Langue</span><span>Français naturel</span></div>
         <div class="mini-row"><span>Souvenirs inventés</span><span>Aucun</span></div>
-        <div class="mini-row"><span>Ambiance</span><span>Noir, pluie, papier, silence</span></div>
+        <div class="mini-row"><span>Ambiance</span><span>Noir, pluie, papier</span></div>
       </section>
     </aside>
 
@@ -910,7 +1110,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
               </p>
               <div class="hero-actions">
                 <button class="primary-btn" onclick="document.getElementById('preuves').scrollIntoView()">Commencer l'enquête</button>
-                <button class="ghost-btn" onclick="switchStationByName('tacos')">Lancer la bobine souvenir</button>
+                <button class="ghost-btn" onclick="startReelMode()">Lancer la bobine</button>
               </div>
             </div>
             <div class="case-card">
@@ -920,7 +1120,7 @@ input[type="range"]{width:100%; accent-color:#ddd}
                 <div class="file-line"><span>Objet</span><span>Anniversaire</span></div>
                 <div class="file-line"><span>Style</span><span>Détective, vieux cinéma, ombres</span></div>
                 <div class="file-line"><span>Constat</span><span>Un cœur encore sincère</span></div>
-                <div class="file-line"><span>Ton</span><span>Charming, sobre, tendre</span></div>
+                <div class="file-line"><span>Puzzle</span><span>Regard / Force / Mystère</span></div>
                 <div class="file-line"><span>Dernière pièce</span><span>Moonlight</span></div>
               </div>
             </div>
@@ -928,67 +1128,71 @@ input[type="range"]{width:100%; accent-color:#ddd}
         </div>
       </section>
 
-      <section class="evidence-section" id="preuves">
+      <section class="section" id="preuves">
         <div class="section-head">
           <h2>Table des preuves</h2>
-          <p>Trois pièces, trois regards, trois notes. Clique chaque photo pour ouvrir son rapport.</p>
+          <p>Trois pièces, trois regards, trois rapports. Ouvre-les dans l'ordre que tu veux, mais garde leurs titres en tête.</p>
         </div>
 
         <div class="board" id="board">
-          <svg class="thread-svg" viewBox="0 0 1000 650" preserveAspectRatio="none" aria-hidden="true">
-            <line x1="175" y1="210" x2="505" y2="105"></line>
-            <line x1="505" y1="105" x2="810" y2="240"></line>
-            <line x1="175" y1="210" x2="810" y2="240"></line>
-            <line x1="505" y1="105" x2="495" y2="520"></line>
-          </svg>
+          <div class="board-grid">
+            <div class="thread-area">
+              <svg class="thread-svg" viewBox="0 0 1000 650" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="175" y1="210" x2="505" y2="105"></line>
+                <line x1="505" y1="105" x2="810" y2="240"></line>
+                <line x1="175" y1="210" x2="810" y2="240"></line>
+                <line x1="505" y1="105" x2="495" y2="520"></line>
+              </svg>
 
-          <div class="polaroids">
-            <button class="photo-card" onclick="openReport(1)">
-              <div class="photo-paper">
-                <span class="pin"></span>
-                <img src="assets/photos/piece_1_noir.png" alt="Pièce A">
-                <div class="caption"><span>Pièce A</span><span>Regard</span></div>
+              <div class="polaroids">
+                <button class="photo-card" onclick="openReport(1)">
+                  <div class="photo-paper">
+                    <span class="pin"></span>
+                    <img src="assets/photos/piece_1_noir.png" alt="Pièce A">
+                    <div class="caption"><span>Pièce A</span><span>Regard</span></div>
+                  </div>
+                  <div class="photo-note">Observation: douceur tenue dans l'ombre, comme une lumière qui ne demande pas la permission d'exister.</div>
+                </button>
+
+                <button class="photo-card" onclick="openReport(2)">
+                  <div class="photo-paper">
+                    <span class="pin"></span>
+                    <img src="assets/photos/piece_2_noir.png" alt="Pièce B">
+                    <div class="caption"><span>Pièce B</span><span>Force</span></div>
+                  </div>
+                  <div class="photo-note">Observation: présence directe, presque cinématographique, belle sans décor, forte sans bruit.</div>
+                </button>
+
+                <button class="photo-card" onclick="openReport(3)">
+                  <div class="photo-paper">
+                    <span class="pin"></span>
+                    <img src="assets/photos/piece_3_noir.png" alt="Pièce C">
+                    <div class="caption"><span>Pièce C</span><span>Mystère</span></div>
+                  </div>
+                  <div class="photo-note">Observation: une énigme calme, un visage dans la nuit, un souvenir qui avance sans fracas.</div>
+                </button>
               </div>
-              <div class="photo-note">Observation: douceur tenue dans l'ombre, comme une lumière qui ne demande pas la permission d'exister.</div>
-            </button>
-
-            <button class="photo-card" onclick="openReport(2)">
-              <div class="photo-paper">
-                <span class="pin"></span>
-                <img src="assets/photos/piece_2_noir.png" alt="Pièce B">
-                <div class="caption"><span>Pièce B</span><span>Force</span></div>
-              </div>
-              <div class="photo-note">Observation: présence directe, presque cinématographique, belle sans décor, forte sans bruit.</div>
-            </button>
-
-            <button class="photo-card" onclick="openReport(3)">
-              <div class="photo-paper">
-                <span class="pin"></span>
-                <img src="assets/photos/piece_3_noir.png" alt="Pièce C">
-                <div class="caption"><span>Pièce C</span><span>Mystère</span></div>
-              </div>
-              <div class="photo-note">Observation: une énigme calme, un visage dans la nuit, un souvenir qui avance sans fracas.</div>
-            </button>
-          </div>
-
-          <div class="timeline">
-            <div class="clue">
-              <strong>Indice 01</strong>
-              <p>Elle n'a pas besoin de couleur pour être remarquable. Même en noir et blanc, sa présence garde ses nuances.</p>
             </div>
-            <div class="clue">
-              <strong>Indice 02</strong>
-              <p>La distance change les conversations, mais pas toujours la vérité intime de ce qu'une personne a représenté.</p>
-            </div>
-            <div class="clue">
-              <strong>Indice 03</strong>
-              <p>Le cadeau ne cherche pas à refaire le passé. Il lui souhaite simplement du beau, avec dignité.</p>
+
+            <div class="timeline">
+              <div class="clue">
+                <strong>Indice 01</strong>
+                <p>Elle n'a pas besoin de couleur pour être remarquable. Même en noir et blanc, sa présence garde ses nuances.</p>
+              </div>
+              <div class="clue">
+                <strong>Indice 02</strong>
+                <p>La distance change les conversations, mais pas toujours la vérité intime de ce qu'une personne a représenté.</p>
+              </div>
+              <div class="clue">
+                <strong>Indice 03</strong>
+                <p>Le cadeau ne cherche pas à refaire le passé. Il lui souhaite simplement du beau, avec dignité.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="memory-section" id="souvenirs">
+      <section class="section" id="souvenirs">
         <div class="section-head">
           <h2>Bobine mémoire</h2>
           <p>La fréquence 88.5 fait monter les mots comme des images anciennes sur une pellicule.</p>
@@ -1004,23 +1208,85 @@ input[type="range"]{width:100%; accent-color:#ddd}
                 comme de la pluie sur une vitre, pour dire qu'une personne peut marquer sans qu'on ait besoin
                 d'en rajouter.
               </p>
-              <button class="ghost-btn" onclick="switchStationByName('tacos')">Allumer la bobine nostalgie</button>
+              <button class="ghost-btn" onclick="startReelMode()">Lire Nostalgie puis Enquête</button>
             </div>
             <div class="word-machine" id="wordMachine"></div>
           </div>
         </div>
       </section>
 
-      <section class="final-section" id="final">
+      <section class="section" id="coffret">
+        <div class="section-head">
+          <h2>Coffret des fréquences</h2>
+          <p>Un petit puzzle intégré: les rapports donnent l'ordre. Quand il est résolu, la station Moonlight s'ouvre.</p>
+        </div>
+
+        <div class="puzzle-box">
+          <div class="puzzle-paper">
+            <h3>Note trouvée dans le tiroir</h3>
+            <p>
+              Les trois rapports ne sont pas seulement des textes. Chacun porte un mot-clef.
+              Une fois les pièces A, B et C inspectées, remets ces mots dans l'ordre du dossier.
+            </p>
+            <p>
+              La suite n'est pas un piège. C'est une manière de lui faire ouvrir elle-même
+              la dernière porte: d'abord ce qui regarde, ensuite ce qui tient debout, enfin ce qui reste impossible à classer.
+            </p>
+            <p><strong>Indice discret:</strong> A → B → C.</p>
+          </div>
+
+          <div class="safe">
+            <h3>Combinaison du coffret</h3>
+            <div class="sequence-window" id="sequenceWindow"><em>Aucune entrée</em></div>
+            <div class="chips">
+              <button class="chip" data-key="lune">Lune</button>
+              <button class="chip" data-key="regard">Regard</button>
+              <button class="chip" data-key="silence">Silence</button>
+              <button class="chip" data-key="force">Force</button>
+              <button class="chip" data-key="mystere">Mystère</button>
+              <button class="chip" data-key="pluie">Pluie</button>
+            </div>
+            <div class="puzzle-actions">
+              <button class="ghost-btn" onclick="resetPuzzle()">Effacer</button>
+              <button class="ghost-btn" onclick="checkPuzzle()">Valider</button>
+            </div>
+
+            <div class="dials">
+              <div class="dial">
+                <strong>A</strong>
+                <div class="dial-value">92.1</div>
+                <button class="dial-btn" onclick="switchStationByName('pisces')">Tuner</button>
+              </div>
+              <div class="dial">
+                <strong>B</strong>
+                <div class="dial-value">88.5</div>
+                <button class="dial-btn" onclick="switchStationByName('tacos')">Tuner</button>
+              </div>
+              <div class="dial">
+                <strong>C</strong>
+                <div class="dial-value">104.3</div>
+                <button class="dial-btn" onclick="switchStationByName('fallen')">Tuner</button>
+              </div>
+            </div>
+            <div class="puzzle-msg" id="puzzleMsg">Inspecte les trois rapports, puis tente la combinaison.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="final">
         <div class="section-head">
           <h2>Le tiroir secret</h2>
-          <p>La lettre se déverrouille quand les trois pièces ont été inspectées.</p>
+          <p>La lettre n'est plus floutée. Elle reste simplement fermée jusqu'à ce que les rapports et le coffret soient terminés.</p>
         </div>
         <div class="secret locked" id="secret">
           <div class="lock-cover">
             <div>
               <h2>Lettre scellée</h2>
-              <p>Ouvre les trois rapports de la table des preuves. Ensuite, la dernière fréquence s'allumera.</p>
+              <p>Ouvre les trois rapports, puis résous le coffret des fréquences. Ensuite, la dernière fréquence s'allumera.</p>
+              <div class="lock-status">
+                <div id="lockReports">Rapports: 0 / 3</div>
+                <div id="lockPuzzle">Coffret: non résolu</div>
+              </div>
             </div>
           </div>
           <div class="secret-body">
@@ -1095,38 +1361,44 @@ input[type="range"]{width:100%; accent-color:#ddd}
 
 <div class="toast" id="toast">Dossier mis à jour</div>
 
-<audio class="hidden-audio" id="audio-pisces" src="assets/audio/pisces.mp3" loop preload="auto"></audio>
-<audio class="hidden-audio" id="audio-tacos" src="assets/audio/raining_tacos_sad.mp3" loop preload="auto"></audio>
-<audio class="hidden-audio" id="audio-fallen" src="assets/audio/fallen_down.mp3" loop preload="auto"></audio>
-<audio class="hidden-audio" id="audio-moon" src="assets/audio/moonlight_candles.mp3" loop preload="auto"></audio>
+<audio class="hidden-audio" id="audio-pisces" src="assets/audio/pisces.mp3" preload="auto"></audio>
+<audio class="hidden-audio" id="audio-tacos" src="assets/audio/raining_tacos_sad.mp3" preload="auto"></audio>
+<audio class="hidden-audio" id="audio-fallen" src="assets/audio/fallen_down.mp3" preload="auto"></audio>
+<audio class="hidden-audio" id="audio-moon" src="assets/audio/moonlight_candles.mp3" preload="auto"></audio>
 
 <script>
 const reports = {
   1: {
     number: "Rapport 01",
     title: "Pièce A: le regard qui garde la lumière",
+    key: "Regard",
     text: `
       <p>Il y a dans cette image quelque chose de presque ancien, comme une photographie retrouvée dans le tiroir d'un bureau privé. Le noir et blanc retire le bruit du monde, et pourtant ton visage garde toute sa présence. On y sent une douceur qui ne s'excuse pas d'exister, une manière d'être là, tranquille, mais impossible à ignorer.</p>
       <p>Je ne veux pas inventer des souvenirs pour rendre ce message plus grand. Il n'en a pas besoin. Ce qui compte, c'est cette impression simple: tu es rare. Tu as une beauté qui ne se limite pas au visage, une beauté qui tient aussi dans l'énergie, dans la façon de traverser une pièce, dans ce mystère que personne ne peut vraiment résumer.</p>
       <p>Pour ton anniversaire, je te souhaite d'être regardée avec autant de délicatesse que cette photo en mérite: sans pression, sans jugement, avec admiration et respect.</p>
+      <p><strong>Mot-clef du rapport:</strong> Regard.</p>
     `
   },
   2: {
     number: "Rapport 02",
     title: "Pièce B: la force silencieuse",
+    key: "Force",
     text: `
       <p>Cette deuxième pièce parle autrement. Elle est plus sombre, plus directe, presque comme un arrêt sur image dans un vieux film. Il n'y a pas besoin d'artifice. Le regard suffit. La lumière pose ses preuves sur ton visage, et l'ombre fait le reste: elle ne cache pas, elle révèle.</p>
       <p>Tu as cette force discrète qu'on ne peut pas fabriquer. Quelque chose de magnétique, de profond, de difficile à détourner. Même quand les choses deviennent compliquées, même quand les mots se font plus rares, je peux reconnaître ce que tu as eu d'unique pour moi. Ce n'est pas une phrase facile. C'est une vérité simple, et parfois les vérités simples sont les plus lourdes.</p>
       <p>J'espère que cette nouvelle année te donnera moins de poids à porter, plus de paix à respirer, et des raisons sincères de te sentir choisie par la vie.</p>
+      <p><strong>Mot-clef du rapport:</strong> Force.</p>
     `
   },
   3: {
     number: "Rapport 03",
     title: "Pièce C: l'étoile sur fond rose devenue noir et blanc",
+    key: "Mystère",
     text: `
       <p>Dans cette troisième image, même les cœurs perdent leur couleur pour devenir une pluie de lumière ancienne. Ce qui reste, c'est ton expression: joueuse, pensive, libre à sa façon. Une photo peut être légère et profonde à la fois. Celle-ci l'est. Elle garde une part d'enfance, une part de mystère, une part de cinéma.</p>
       <p>Tu es quelqu'un que je ne pourrais pas décrire avec un seul mot. Unique, oui. Belle, évidemment. Mais aussi singulière, attachante, imprévisible, brillante d'une manière qui t'appartient. Je sais que nous ne sommes plus exactement dans la même douceur qu'avant, et je ne veux pas faire semblant. Mais je peux encore souhaiter ton bonheur avec honnêteté.</p>
       <p>Alors, joyeux anniversaire. Que cette journée t'appartienne vraiment, et qu'elle te rappelle que ta lumière n'a pas besoin d'être parfaite pour être précieuse.</p>
+      <p><strong>Mot-clef du rapport:</strong> Mystère.</p>
     `
   }
 };
@@ -1139,9 +1411,18 @@ const audio = {
 };
 let activeTrack = null;
 let currentTrack = "pisces";
+let reelMode = false;
 let unlocked = {1:false,2:false,3:false};
+let puzzleSequence = [];
+let puzzleSolved = false;
+
 const volume = document.getElementById("volume");
-Object.values(audio).forEach(a => a.volume = parseFloat(volume.value));
+Object.values(audio).forEach(a => {
+  a.volume = parseFloat(volume.value);
+  a.loop = false;
+});
+audio.pisces.loop = true;
+
 volume.addEventListener("input", () => Object.values(audio).forEach(a => a.volume = parseFloat(volume.value)));
 
 function toast(text){
@@ -1149,10 +1430,10 @@ function toast(text){
   t.textContent = text;
   t.classList.add("show");
   clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(()=>t.classList.remove("show"), 2200);
+  window.toastTimer = setTimeout(()=>t.classList.remove("show"), 2300);
 }
 
-function playTrack(name){
+function playTrack(name, restart=true){
   if(name === "moon" && document.getElementById("moonStation").disabled){
     toast("La fréquence 97.7 est encore scellée.");
     return;
@@ -1164,41 +1445,98 @@ function playTrack(name){
   currentTrack = name;
   if(activeTrack){
     activeTrack.volume = parseFloat(volume.value);
-    activeTrack.play().catch(()=>{});
+    if(restart || activeTrack.ended) activeTrack.currentTime = 0;
+    activeTrack.play().catch(()=>toast("Clique une fois sur la page pour autoriser l'audio."));
   }
 }
 
-function switchStation(btn){
+function switchStation(btn, restart=true){
   const track = btn.dataset.track;
-  playTrack(track);
+  if(track !== "tacos" && track !== "fallen") reelMode = false;
+  playTrack(track, restart);
   document.querySelectorAll(".station").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   document.getElementById("freq").textContent = btn.dataset.freq;
   document.getElementById("stationName").textContent = btn.dataset.name;
   const note = document.getElementById("radioNote");
-  if(track === "pisces") note.textContent = "Pisces reste la bande-son principale: lente, douce, globale.";
+  if(track === "pisces") note.textContent = "Pisces reste la bande-son principale: lente, douce, globale. Elle boucle proprement.";
   if(track === "tacos") {
-    note.textContent = "La nostalgie s'ouvre. Les mots montent comme des images sur une vieille bobine.";
+    note.textContent = reelMode ? "Mode bobine: Nostalgie joue jusqu'au bout, puis Enquête prendra le relais." : "Nostalgie joue maintenant en entier. Utilise le mode bobine pour enchaîner automatiquement.";
     burstWords();
     document.getElementById("souvenirs").scrollIntoView();
   }
-  if(track === "fallen") note.textContent = "Fallen Down accompagne l'enquête: plus calme, plus intérieur, presque fragile.";
+  if(track === "fallen") note.textContent = reelMode ? "Mode bobine: Enquête joue jusqu'au bout, puis Pisces revient." : "Fallen Down accompagne l'enquête: calme, intérieur, presque fragile.";
   if(track === "moon") {
     note.textContent = "Moonlight est la dernière pièce: la chanson personnelle, après l'ouverture du tiroir secret.";
     document.getElementById("final").scrollIntoView();
     moonFlash();
   }
 }
-document.querySelectorAll(".station").forEach(btn => btn.addEventListener("click", () => switchStation(btn)));
 
-function switchStationByName(name){
+document.querySelectorAll(".station").forEach(btn => btn.addEventListener("click", () => switchStation(btn, true)));
+
+function switchStationByName(name, restart=true){
   const btn = document.querySelector(`.station[data-track="${name}"]`);
-  if(btn) switchStation(btn);
+  if(btn) switchStation(btn, restart);
 }
+
+function startReelMode(){
+  reelMode = true;
+  switchStationByName("tacos", true);
+  toast("Mode bobine lancé: Nostalgie → Enquête → Pisces.");
+}
+
+function restartTrack(){
+  if(activeTrack){
+    activeTrack.currentTime = 0;
+    activeTrack.play().catch(()=>{});
+    toast("Piste relancée depuis le début.");
+  } else {
+    switchStationByName(currentTrack || "pisces", true);
+  }
+}
+
+Object.entries(audio).forEach(([key,a]) => {
+  a.addEventListener("ended", () => {
+    if(key === "tacos" && reelMode){
+      switchStationByName("fallen", true);
+    } else if(key === "fallen" && reelMode){
+      reelMode = false;
+      switchStationByName("pisces", true);
+    } else if(key === "moon"){
+      toast("Moonlight est terminée.");
+    } else if(key !== "pisces") {
+      toast("Piste terminée.");
+    }
+  });
+  a.addEventListener("error", () => {
+    toast("Erreur audio: fichier introuvable ou bloqué par le navigateur.");
+  });
+});
+
+function formatTime(s){
+  if(!isFinite(s) || s < 0) return "0:00";
+  const m = Math.floor(s/60);
+  const sec = Math.floor(s%60).toString().padStart(2,"0");
+  return `${m}:${sec}`;
+}
+function updateProgress(){
+  if(activeTrack && isFinite(activeTrack.duration) && activeTrack.duration > 0){
+    document.getElementById("progressFill").style.width = `${Math.min(100, (activeTrack.currentTime / activeTrack.duration) * 100)}%`;
+    document.getElementById("timeNow").textContent = formatTime(activeTrack.currentTime);
+    document.getElementById("timeTotal").textContent = formatTime(activeTrack.duration);
+  } else {
+    document.getElementById("progressFill").style.width = "0%";
+    document.getElementById("timeNow").textContent = "0:00";
+    document.getElementById("timeTotal").textContent = "0:00";
+  }
+  requestAnimationFrame(updateProgress);
+}
+updateProgress();
 
 document.getElementById("startBtn").addEventListener("click", () => {
   document.getElementById("startScreen").style.display = "none";
-  switchStationByName("pisces");
+  switchStationByName("pisces", true);
   toast("Bureau ouvert. Pisces est lancé.");
 });
 
@@ -1212,8 +1550,8 @@ function openReport(num){
   const row = document.getElementById("status"+num);
   row.classList.add("done");
   row.querySelector(".stamp").textContent = "VU";
-  switchStationByName("fallen");
-  checkUnlock();
+  updateLockStatus();
+  checkUnlock(false);
 }
 function closeReport(){
   document.getElementById("modal").classList.remove("active");
@@ -1225,8 +1563,66 @@ document.addEventListener("keydown", e => {
   if(e.key === "Escape") closeReport();
 });
 
-function checkUnlock(){
-  if(unlocked[1] && unlocked[2] && unlocked[3]){
+function updateLockStatus(){
+  const count = [1,2,3].filter(n=>unlocked[n]).length;
+  document.getElementById("lockReports").textContent = `Rapports: ${count} / 3`;
+  document.getElementById("lockPuzzle").textContent = `Coffret: ${puzzleSolved ? "résolu" : "non résolu"}`;
+}
+
+document.querySelectorAll(".chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if(puzzleSequence.length >= 3) return;
+    puzzleSequence.push({key: btn.dataset.key, label: btn.textContent});
+    renderSequence();
+  });
+});
+
+function renderSequence(){
+  const win = document.getElementById("sequenceWindow");
+  if(puzzleSequence.length === 0){
+    win.innerHTML = "<em>Aucune entrée</em>";
+    return;
+  }
+  win.innerHTML = puzzleSequence.map(item => `<span>${item.label}</span>`).join("");
+}
+
+function resetPuzzle(){
+  puzzleSequence = [];
+  renderSequence();
+  document.getElementById("puzzleMsg").textContent = "Combinaison effacée. Cherche les mots-clefs dans les rapports.";
+}
+
+function checkPuzzle(){
+  const count = [1,2,3].filter(n=>unlocked[n]).length;
+  if(count < 3){
+    document.getElementById("puzzleMsg").textContent = "Le coffret refuse de s'ouvrir: les trois rapports doivent être inspectés d'abord.";
+    toast("Il manque encore des rapports.");
+    return;
+  }
+  const attempt = puzzleSequence.map(x=>x.key).join("-");
+  if(attempt === "regard-force-mystere"){
+    puzzleSolved = true;
+    document.getElementById("puzzleMsg").textContent = "Coffret ouvert. La dernière fréquence apparaît sur la radio.";
+    const sp = document.getElementById("statusPuzzle");
+    sp.classList.add("done");
+    sp.querySelector(".stamp").textContent = "OUVERT";
+    updateLockStatus();
+    checkUnlock(true);
+  } else {
+    document.getElementById("puzzleMsg").textContent = "Mauvaise piste. Repars des rapports A, B et C.";
+    puzzleSequence = [];
+    renderSequence();
+    toast("Mauvaise combinaison.");
+  }
+}
+
+function checkUnlock(fromPuzzle){
+  const reportsDone = unlocked[1] && unlocked[2] && unlocked[3];
+  if(reportsDone && !puzzleSolved){
+    document.getElementById("coffret").scrollIntoView();
+    if(fromPuzzle !== false) toast("Les rapports sont complets. Le coffret attend la combinaison.");
+  }
+  if(reportsDone && puzzleSolved){
     const sec = document.getElementById("secret");
     if(sec.classList.contains("locked")){
       sec.classList.remove("locked");
@@ -1238,14 +1634,10 @@ function checkUnlock(){
       sf.classList.add("done");
       sf.querySelector(".stamp").textContent = "OUVERTE";
       toast("Tiroir secret ouvert. Moonlight est disponible.");
-      setTimeout(()=>document.getElementById("final").scrollIntoView(), 700);
+      setTimeout(()=>document.getElementById("final").scrollIntoView(), 750);
     }
-  } else {
-    const count = [1,2,3].filter(n=>unlocked[n]).length;
-    toast(`Pièce ${numToLetter(count)} enregistrée. ${3-count} rapport(s) restant(s).`);
   }
 }
-function numToLetter(n){ return n === 1 ? "A" : n === 2 ? "B" : "C"; }
 
 /* Rain canvas */
 const rain = document.getElementById("rain");
@@ -1419,6 +1811,7 @@ function drawMem(){
   requestAnimationFrame(drawMem);
 }
 drawMem();
+updateLockStatus();
 </script>
 </body>
 </html>
